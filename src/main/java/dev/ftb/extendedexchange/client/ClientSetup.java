@@ -6,7 +6,7 @@ import dev.ftb.extendedexchange.menu.StoneTableMenu;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-
+//@SuppressWarnings("removal")
 public class ClientSetup {
     public static void initEarly() {
         // run on mod construction

@@ -7,11 +7,10 @@ import dev.ftb.extendedexchange.client.gui.buttons.HighlightButton;
 import dev.ftb.extendedexchange.config.ConfigHelper;
 import dev.ftb.extendedexchange.menu.StoneTableMenu;
 import moze_intel.projecte.api.ProjectEAPI;
+import moze_intel.projecte.api.proxy.IEMCProxy;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -35,9 +34,9 @@ public class StoneTableScreen extends AbstractTableScreen<StoneTableMenu> {
                 .withTexture(TEXTURE, 215, 0));
 
         addRenderableWidget(new HighlightButton(leftPos + 9, topPos + 116)
-                .withTag("learn").withTooltip(new TranslatableComponent("block.extendedexchange.stone_table.learn")));
+                .withTag("learn").withTooltip(Component.translatable("block.extendedexchange.stone_table.learn")));
         addRenderableWidget(new HighlightButton(leftPos + 153, topPos + 116)
-                .withTag("unlearn").withTooltip(new TranslatableComponent("block.extendedexchange.stone_table.unlearn")));
+                .withTag("unlearn").withTooltip(Component.translatable("block.extendedexchange.stone_table.unlearn")));
 
         addRenderableWidget(new HighlightButton(leftPos + 80, topPos + 68).withTag("burn"));
 
@@ -64,11 +63,19 @@ public class StoneTableScreen extends AbstractTableScreen<StoneTableMenu> {
     }
 
     @Override
-    public List<Component> getTooltipFromItem(ItemStack itemStack) {
-        List<Component> list = super.getTooltipFromItem(itemStack);
-        if (!ConfigHelper.isStoneTableWhitelisted(itemStack) && ProjectEAPI.getEMCProxy().hasValue(itemStack)) {
-            list.add(new TranslatableComponent("gui.extendedexchange.stone_table.cant_use").withStyle(ChatFormatting.RED));
+    protected List<Component> getTooltipFromContainerItem(ItemStack itemStack) {
+        List<Component> list = super.getTooltipFromContainerItem(itemStack);
+        if (!ConfigHelper.isStoneTableWhitelisted(itemStack) && IEMCProxy.INSTANCE.hasValue(itemStack)) {
+            list.add(Component.translatable("gui.extendedexchange.stone_table.cant_use").withStyle(ChatFormatting.RED));
         }
         return list;
     }
+//    @Override
+//    public List<Component> getTooltipFromItem(ItemStack itemStack) {
+//        List<Component> list = super.getTooltipFromItem(itemStack);
+//        if (!ConfigHelper.isStoneTableWhitelisted(itemStack) && ProjectEAPI.getEMCProxy().hasValue(itemStack)) {
+//            list.add(Component.translatable("gui.extendedexchange.stone_table.cant_use").withStyle(ChatFormatting.RED));
+//        }
+//        return list;
+//    }
 }

@@ -1,13 +1,10 @@
 package dev.ftb.extendedexchange.block;
 
 import dev.ftb.extendedexchange.menu.StoneTableMenu;
-import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -26,7 +23,6 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -49,7 +45,7 @@ public class StoneTableBlock extends Block {
     };
 
     public StoneTableBlock() {
-        super(Properties.of(Material.STONE).strength(1F).sound(SoundType.STONE).noOcclusion());
+        super(Properties.of().strength(1F).sound(SoundType.STONE).noOcclusion());
         registerDefaultState(getStateDefinition().any().setValue(BlockStateProperties.FACING, Direction.DOWN));
     }
 
@@ -74,7 +70,7 @@ public class StoneTableBlock extends Block {
     @Deprecated
     public InteractionResult use(@Nonnull BlockState state, Level world, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult rtr) {
         if (player instanceof ServerPlayer serverPlayer) {
-            NetworkHooks.openGui(serverPlayer, new ContainerProvider(pos), pos);
+            NetworkHooks.openScreen(serverPlayer, new ContainerProvider(pos), pos);
         }
 
         return InteractionResult.SUCCESS;
@@ -84,7 +80,7 @@ public class StoneTableBlock extends Block {
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> list, TooltipFlag flag) {
         super.appendHoverText(stack, level, list, flag);
-        list.add(new TranslatableComponent("block.extendedexchange.stone_table.tooltip").withStyle(ChatFormatting.GRAY));
+        list.add(Component.translatable("block.extendedexchange.stone_table.tooltip").withStyle(ChatFormatting.GRAY));
     }
 
     @Override
@@ -101,7 +97,7 @@ public class StoneTableBlock extends Block {
         @Override
         @Nonnull
         public Component getDisplayName() {
-            return TextComponent.EMPTY;
+            return Component.empty();
         }
     }
 }

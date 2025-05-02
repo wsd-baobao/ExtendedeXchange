@@ -12,13 +12,15 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
-public class AlchemyTableCategory extends AbstractEXCategory<AlchemyTableRecipe> {
+public  class AlchemyTableCategory extends AbstractEXCategory<AlchemyTableRecipe> {
     protected AlchemyTableCategory() {
         super(RecipeTypes.ALCHEMY_TABLE,
-                new TranslatableComponent("block.extendedexchange.alchemy_table"),
+                Component.translatable("block.extendedexchange.alchemy_table"),
                 guiHelper().drawableBuilder(EXUtils.rl("textures/gui/alchemy_table_jei.png"), 0, 0, 128, 18)
                         .setTextureSize(128, 64).build(),
                 guiHelper().createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModItems.ALCHEMY_TABLE.get()))
@@ -30,16 +32,29 @@ public class AlchemyTableCategory extends AbstractEXCategory<AlchemyTableRecipe>
         builder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
                 .addIngredients(recipe.getIngredients().get(0));
         builder.addSlot(RecipeIngredientRole.OUTPUT, 111, 1)
-                .addItemStack(recipe.getResultItem());
+                .addItemStack(recipe.getResultItem(RegistryAccess.EMPTY));
     }
 
     @Override
-    public void draw(AlchemyTableRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack poseStack, double mouseX, double mouseY) {
+    public void draw(AlchemyTableRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
         Font font = Minecraft.getInstance().font;
         recipeSlotsView.getSlotViews(RecipeIngredientRole.INPUT).get(0).getDisplayedIngredient(VanillaTypes.ITEM_STACK).ifPresent(stack -> {
             long emc = recipe.getTotalCost(stack);
             String s = EMCFormat.INSTANCE.format(emc) + " EMC";
-            font.draw(poseStack, s, (128 - font.width(s)) / 2f, 5f, 0xFF404040);
+            guiGraphics.drawString(font,s, (128 - font.width(s)) / 2f, 5f, 0xFF404040,  false);
+//            font.draw(poseStack, s, (128 - font.width(s)) / 2f, 5f, 0xFF404040);
         });
     }
+
+//    @Override
+//    public void draw(AlchemyTableRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack poseStack, double mouseX, double mouseY) {
+//        Font font = Minecraft.getInstance().font;
+//        recipeSlotsView.getSlotViews(RecipeIngredientRole.INPUT).get(0).getDisplayedIngredient(VanillaTypes.ITEM_STACK).ifPresent(stack -> {
+//            long emc = recipe.getTotalCost(stack);
+//            String s = EMCFormat.INSTANCE.format(emc) + " EMC";
+//            font.draw(poseStack, s, (128 - font.width(s)) / 2f, 5f, 0xFF404040);
+//        });
+//    }
+
+
 }

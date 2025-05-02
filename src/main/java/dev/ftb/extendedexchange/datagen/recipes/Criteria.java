@@ -18,13 +18,11 @@
 package dev.ftb.extendedexchange.datagen.recipes;
 
 import net.minecraft.advancements.CriterionTriggerInstance;
-import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.advancements.critereon.InventoryChangeTrigger;
-import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.critereon.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class Criteria {
     private static InventoryChangeTrigger.TriggerInstance hasItem(ItemLike itemIn) {
@@ -32,16 +30,16 @@ public class Criteria {
     }
 
     private static InventoryChangeTrigger.TriggerInstance hasItem(ItemPredicate... predicates) {
-        return new InventoryChangeTrigger.TriggerInstance(EntityPredicate.Composite.ANY, MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY, predicates);
+        return new InventoryChangeTrigger.TriggerInstance(ContextAwarePredicate.ANY, MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY, predicates);
     }
 
     public static RecipeCriterion has(ItemLike provider) {
-        return RecipeCriterion.of(provider.asItem().getRegistryName().getPath(), hasItem(provider.asItem()));
+        return RecipeCriterion.of(ForgeRegistries.ITEMS.getKey(provider.asItem()).getPath(), hasItem(provider.asItem()));
     }
 
     public static RecipeCriterion has(Ingredient ingredient) {
         Item item = ingredient.getItems()[0].getItem();
-        return RecipeCriterion.of(item.getRegistryName().getPath(), hasItem(item));
+        return RecipeCriterion.of(ForgeRegistries.ITEMS.getKey(item).getPath(), hasItem(item));
     }
 
     public static class RecipeCriterion {

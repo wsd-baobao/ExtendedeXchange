@@ -22,8 +22,6 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.Collections;
 import java.util.List;
@@ -62,15 +60,15 @@ public abstract class AbstractEXCategory<T> implements IRecipeCategory<T> {
         return type;
     }
 
-    @Override
-    public ResourceLocation getUid() {
-        return type.getUid();
-    }
-
-    @Override
-    public Class<? extends T> getRecipeClass() {
-        return type.getRecipeClass();
-    }
+//    @Override
+//    public ResourceLocation getUid() {
+//        return type.getUid();
+//    }
+//
+//    @Override
+//    public Class<? extends T> getRecipeClass() {
+//        return type.getRecipeClass();
+//    }
 
     static IGuiHelper guiHelper() {
         return JEIIntegration.jeiHelpers.getGuiHelper();
@@ -78,7 +76,7 @@ public abstract class AbstractEXCategory<T> implements IRecipeCategory<T> {
 
     List<Component> positionalTooltip(double mouseX, double mouseY, BiPredicate<Double,Double> predicate, String translationKey, Object... args) {
         return predicate.test(mouseX, mouseY) ?
-                Collections.singletonList(new TranslatableComponent(translationKey, args)) :
+                Collections.singletonList(Component.translatable(translationKey, args)) :
                 Collections.emptyList();
     }
 }

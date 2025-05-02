@@ -4,7 +4,6 @@ import dev.ftb.extendedexchange.block.entity.PersonalLinkBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
@@ -24,6 +23,6 @@ public class PersonalLinkBlock extends AbstractEXBlock {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> list, TooltipFlag flag) {
         super.appendHoverText(stack, level, list, flag);
-        list.add(new TranslatableComponent("block.extendedexchange.personal_link.tooltip").withStyle(ChatFormatting.GRAY));
+        list.add(Component.translatable("block.extendedexchange.personal_link.tooltip").withStyle(ChatFormatting.GRAY));
     }
 }

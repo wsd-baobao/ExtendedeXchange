@@ -7,9 +7,9 @@ import dev.ftb.extendedexchange.recipes.RecipeCache;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -19,8 +19,8 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
@@ -85,7 +85,7 @@ public class AlchemyTableBlockEntity extends AbstractEMCBlockEntity implements M
 
         ItemStack input = inventory.getStackInSlot(0);
         findRecipeFor(input).ifPresent(recipe -> {
-            ItemStack result = recipe.assemble(new SimpleContainer(input));
+            ItemStack result = recipe.assemble(new SimpleContainer(input), RegistryAccess.EMPTY);
             if (!hasOutput || ItemHandlerHelper.canItemStacksStack(output, result)) {
                 totalCost = recipe.getTotalCost(input);
                 craftingTime = recipe.getCraftingTime();
@@ -106,7 +106,7 @@ public class AlchemyTableBlockEntity extends AbstractEMCBlockEntity implements M
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
             return itemCap.cast();
         }
         return super.getCapability(cap, side);
@@ -148,7 +148,7 @@ public class AlchemyTableBlockEntity extends AbstractEMCBlockEntity implements M
 
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent("block.extendedexchange.alchemy_table");
+        return Component.translatable("block.extendedexchange.alchemy_table");
     }
 
     @Nullable

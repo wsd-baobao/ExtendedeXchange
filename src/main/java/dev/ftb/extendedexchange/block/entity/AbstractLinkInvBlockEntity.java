@@ -6,6 +6,7 @@ import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
+import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.config.ProjectEConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,9 +17,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * An EMC-linked block entity with 1 or more input slots and 1 or more output (filter) slots
  */
 public abstract class AbstractLinkInvBlockEntity extends AbstractLinkBlockEntity {
+    private static final Log log = LogFactory.getLog(AbstractLinkInvBlockEntity.class);
     private final LinkInputHandler inputHandler;
     private final LinkOutputHandler outputHandler;
     private final LazyOptional<WrappedItemHandler> itemCap;
@@ -59,17 +63,20 @@ public abstract class AbstractLinkInvBlockEntity extends AbstractLinkBlockEntity
         // scan items in the input inv and convert to EMC, adding to the block's EMC store
 
         ServerPlayer player = nonNullLevel().getServer().getPlayerList().getPlayer(getOwnerId());
+        log.info("Player " + player);
         LazyOptional<IKnowledgeProvider> knowledgeProvider = player == null ? LazyOptional.empty() : player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
         boolean syncKnowledge = false;
         boolean changeDone = false;
 
         for (int i = 0; i < inputHandler.getSlots(); i++) {
             ItemStack stack = inputHandler.getStackInSlot(i);
+            log.info("Item in slot " + i + ": " + stack);
             if (!stack.isEmpty()) {
-                long value = ProjectEAPI.getEMCProxy().getValue(stack);
+                long value = IEMCProxy.INSTANCE.getValue(stack);
+
                 if (value > 0L) {
                     if (learnItems()) {
-                        ItemInfo fixed = ProjectEAPI.getEMCProxy().getPersistentInfo(ItemInfo.fromStack(stack));
+                        ItemInfo fixed = IEMCProxy.INSTANCE.getPersistentInfo(ItemInfo.fromStack(stack));
                         if (knowledgeProvider.map(p -> p.addKnowledge(fixed)).orElse(false)) {
                             syncKnowledge = true;
                         }
@@ -95,7 +102,7 @@ public abstract class AbstractLinkInvBlockEntity extends AbstractLinkBlockEntity
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
             return itemCap.cast();
         }
         return super.getCapability(cap, side);
@@ -122,10 +129,10 @@ public abstract class AbstractLinkInvBlockEntity extends AbstractLinkBlockEntity
      * @param stack the item to add
      */
     public void addToOutput(ItemStack stack) {
-        ItemStack fixedStack = ProjectEAPI.getEMCProxy().getPersistentInfo(ItemInfo.fromStack(stack)).createStack();
+        ItemStack fixedStack = IEMCProxy.INSTANCE.getPersistentInfo(ItemInfo.fromStack(stack)).createStack();
 
         for (int i = 0; i < outputHandler.getSlots(); i++) {
-            if (ItemStack.isSame(outputHandler.getItemForDisplay(i), fixedStack)) {
+            if (ItemStack.isSameItem(outputHandler.getItemForDisplay(i), fixedStack)) {
                 return;
             }
         }

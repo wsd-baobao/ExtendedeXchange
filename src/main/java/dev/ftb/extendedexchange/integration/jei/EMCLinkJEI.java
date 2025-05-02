@@ -10,7 +10,9 @@ import dev.ftb.extendedexchange.network.NetworkHandler;
 import dev.ftb.extendedexchange.network.PacketJEIGhost;
 import dev.ftb.extendedexchange.util.EXUtils;
 import mezz.jei.api.gui.handlers.IGhostIngredientHandler;
+import mezz.jei.api.ingredients.ITypedIngredient;
 import moze_intel.projecte.api.ProjectEAPI;
+import moze_intel.projecte.api.proxy.IEMCProxy;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.inventory.Slot;
@@ -19,11 +21,12 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 
 public class EMCLinkJEI<S extends AbstractEXScreen<M,T>, M extends AbstractEXMenu<T>, T extends AbstractEMCBlockEntity> implements IGhostIngredientHandler<S> {
+
     @Override
-    public <I> List<Target<I>> getTargets(S gui, I ingredient, boolean doStart) {
+    public <I> List<Target<I>> getTargetsTyped(S gui, ITypedIngredient<I> iTypedIngredient, boolean b) {
         ImmutableList.Builder<Target<I>> builder = ImmutableList.builder();
-        if (ingredient instanceof ItemStack stack
-                && ProjectEAPI.getEMCProxy().hasValue(stack)
+        if (iTypedIngredient.getIngredient() instanceof ItemStack stack
+                && IEMCProxy.INSTANCE.hasValue(stack)
                 && EXUtils.playerHasKnowledge(ClientUtils.getClientPlayer(), stack))
         {
             NonNullList<Slot> slots = gui.getMenu().slots;

@@ -6,6 +6,7 @@ import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage;
+import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.config.ProjectEConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,12 +30,12 @@ public abstract class AbstractLinkMenu<T extends AbstractLinkInvBlockEntity> ext
         if (slot.hasItem()) {
             ItemStack stack = slot.getItem();
 
-            long value = ProjectEAPI.getEMCProxy().getValue(stack);
+            long value = IEMCProxy.INSTANCE.getValue(stack);
             if (value == 0) return ItemStack.EMPTY;
 
             ItemStack oldStack = stack.copy();
             player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY).ifPresent(provider -> {
-                ItemInfo fixed = ProjectEAPI.getEMCProxy().getPersistentInfo(ItemInfo.fromStack(stack));
+                ItemInfo fixed = IEMCProxy.INSTANCE.getPersistentInfo(ItemInfo.fromStack(stack));
                 provider.addKnowledge(fixed);
                 getBlockEntity().addToOutput(fixed.createStack());
                 long actualEmc = (long) (stack.getCount() * value * ProjectEConfig.server.difficulty.covalenceLoss.get());
@@ -57,7 +58,7 @@ public abstract class AbstractLinkMenu<T extends AbstractLinkInvBlockEntity> ext
                     case QUICK_MOVE -> slot.set(ItemStack.EMPTY);
                     case PICKUP -> {
                         if (!getCarried().isEmpty()) {
-                            ItemStack fixed = ProjectEAPI.getEMCProxy().getPersistentInfo(ItemInfo.fromStack(getCarried())).createStack();
+                            ItemStack fixed = IEMCProxy.INSTANCE.getPersistentInfo(ItemInfo.fromStack(getCarried())).createStack();
 
                             // prevent duplicate items in the filter slots
                             for (int i = 0; i < getBlockEntity().getOutputHandler().getSlots(); i++) {

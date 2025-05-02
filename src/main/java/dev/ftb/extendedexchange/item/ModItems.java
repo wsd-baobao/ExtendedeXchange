@@ -21,7 +21,7 @@ public class ModItems {
     public static final DeferredRegister<Item> REGISTRY = DeferredRegister.create(ForgeRegistries.ITEMS, ExtendedExchange.MOD_ID);
 
     private static RegistryObject<BlockItem> blockItem(String id, RegistryObject<? extends Block> sup) {
-        return REGISTRY.register(id, () -> new BlockItem(sup.get(), new Item.Properties().tab(ItemGroups.CREATIVE_TAB)));
+        return REGISTRY.register(id, () -> new BlockItem(sup.get(), new Item.Properties()));
     }
 
     public static final RegistryObject<BlockItem> ENERGY_LINK = blockItem("energy_link", ModBlocks.ENERGY_LINK);
@@ -81,12 +81,4 @@ public class ModItems {
         }
     });
 
-    static class ItemGroups {
-        static final CreativeModeTab CREATIVE_TAB = new CreativeModeTab(ExtendedExchange.MOD_ID) {
-            @Override
-            public ItemStack makeIcon() {
-                return new ItemStack(ModItems.ARCANE_TABLET.get());
-            }
-        };
-    }
 }

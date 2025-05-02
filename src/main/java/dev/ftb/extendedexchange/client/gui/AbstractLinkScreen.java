@@ -1,14 +1,13 @@
 package dev.ftb.extendedexchange.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.extendedexchange.ExtendedExchange;
 import dev.ftb.extendedexchange.block.entity.AbstractLinkInvBlockEntity;
 import dev.ftb.extendedexchange.client.EXClientEventHandler;
 import dev.ftb.extendedexchange.inventory.FilterSlot;
 import dev.ftb.extendedexchange.menu.AbstractLinkMenu;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -25,23 +24,41 @@ public abstract class AbstractLinkScreen<C extends AbstractLinkMenu<T>, T extend
     }
 
     @Override
-    protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
-        font.draw(poseStack, menu.getBlockEntity().getOwnerName(), 8f, 6f, 0x404040);
-        font.draw(poseStack, EXClientEventHandler.getEMCRateString(), 8, getEMCLabelYPos(), 0x404040);
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+//        super.renderLabels(guiGraphics, mouseX, mouseY);
+        guiGraphics.drawString(font, menu.getBlockEntity().getOwnerName(), 8f, 6f, 0x404040, false);
+        guiGraphics.drawString(font,EXClientEventHandler.getEMCRateString(), 8, getEMCLabelYPos(), 0x404040, false);
+//        font.draw(poseStack, menu.getBlockEntity().getOwnerName(), 8f, 6f, 0x404040);
+//        font.draw(poseStack, EXClientEventHandler.getEMCRateString(), 8, getEMCLabelYPos(), 0x404040);
     }
+
+//    protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
+//        font.draw(poseStack, menu.getBlockEntity().getOwnerName(), 8f, 6f, 0x404040);
+//        font.draw(poseStack, EXClientEventHandler.getEMCRateString(), 8, getEMCLabelYPos(), 0x404040);
+//    }
 
     protected int getEMCLabelYPos() {
         return 73;
     }
 
     @Override
-    public List<Component> getTooltipFromItem(ItemStack itemStack) {
-        List<Component> l = super.getTooltipFromItem(itemStack);
-        if (!itemStack.isEmpty() && getSlotUnderMouse() instanceof FilterSlot) {
+    protected List<Component> getTooltipFromContainerItem(ItemStack stack) {
+        List<Component> l = super.getTooltipFromContainerItem(stack);
+        if (!stack.isEmpty() && getSlotUnderMouse() instanceof FilterSlot) {
             for (int i = 1; i <= 3; i++) {
-                l.add(new TranslatableComponent("gui.extendedexchange.link.tooltip." + i).withStyle(ChatFormatting.GRAY));
+                l.add(Component.translatable("gui.extendedexchange.link.tooltip." + i).withStyle(ChatFormatting.GRAY));
             }
         }
         return l;
     }
+
+//    public List<Component> getTooltipFromItem(ItemStack itemStack) {
+//        List<Component> l = super.getTooltipFromItem(itemStack);
+//        if (!itemStack.isEmpty() && getSlotUnderMouse() instanceof FilterSlot) {
+//            for (int i = 1; i <= 3; i++) {
+//                l.add(Component.translatable("gui.extendedexchange.link.tooltip." + i).withStyle(ChatFormatting.GRAY));
+//            }
+//        }
+//        return l;
+//    }
 }

@@ -9,11 +9,13 @@ import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -55,7 +57,7 @@ public class EXClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onClientDisconnect(ClientPlayerNetworkEvent.LoggedOutEvent event) {
+    public static void onClientDisconnect(ClientPlayerNetworkEvent.LoggingOut event) {
         emcAmount = BigInteger.ZERO;
         timer = 0;
         emcRate = BigInteger.ZERO;
@@ -63,13 +65,42 @@ public class EXClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void addInfoText(RenderGameOverlayEvent.Text event) {
+    public static void addInfoText(RenderGuiOverlayEvent.Post event) {
         if (Minecraft.getInstance().player != null &&
                 (!ConfigHelper.client().general.onlyShowEMCWhenHoldingModItem.get() || holdingValidItem(Minecraft.getInstance().player)))
         {
             EMCOverlayPosition oPos = ConfigHelper.client().general.screenPosition.get();
             if (oPos != EMCOverlayPosition.DISABLED && emcAmount.compareTo(BigInteger.ZERO) > 0) {
-                (oPos == EMCOverlayPosition.TOP_LEFT ? event.getLeft() : event.getRight()).add("EMC: " + getEMCRateString());
+//                (oPos == EMCOverlayPosition.TOP_LEFT ? event.getLeft() : event.getRight()).add("EMC: " + getEMCRateString());
+
+                // 获取绘制上下文和窗口信息
+                GuiGraphics guiGraphics = event.getGuiGraphics();
+                Font font = Minecraft.getInstance().font;
+                int windowWidth = event.getWindow().getWidth();
+                int windowHeight = event.getWindow().getHeight();
+
+                // 准备要绘制的文本
+                String text = "EMC: " + getEMCRateString();
+                int textWidth = font.width(text);
+                int textHeight = font.lineHeight;
+
+                // 计算文本位置（根据oPos决定）
+                int x, y;
+                int padding = 5; // 文本与边缘的间距
+
+                if (oPos == EMCOverlayPosition.TOP_LEFT) {
+                    x = padding;
+                    y = padding;
+                } else { // 假设其他位置为TOP_RIGHT
+                    x = windowWidth - textWidth - padding;
+                    y = padding;
+                }
+                // 绘制文本背景（可选，提高可读性）
+                int backgroundWidth = textWidth + padding * 2;
+                int backgroundHeight = textHeight + padding * 2;
+                guiGraphics.fill(x - padding, y - padding, x + backgroundWidth - padding, y + backgroundHeight - padding, 0x80000000);
+                // 绘制文本
+                guiGraphics.drawString(font, text, x, y, 0xFFFFFF, false);
             }
         }
     }
@@ -87,7 +118,7 @@ public class EXClientEventHandler {
         return holdingValidItem(player.getMainHandItem()) || holdingValidItem(player.getOffhandItem());
     }
     private static boolean holdingValidItem(ItemStack stack) {
-        String namespace = stack.getItem().getRegistryName().getNamespace();
+        String namespace = stack.getItem().getName(stack).getString();
         return namespace.equals(ExtendedExchange.MOD_ID) || namespace.equals(ProjectEAPI.PROJECTE_MODID);
     }
 }

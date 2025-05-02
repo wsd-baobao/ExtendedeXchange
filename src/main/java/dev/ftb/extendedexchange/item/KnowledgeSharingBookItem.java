@@ -3,13 +3,12 @@ package dev.ftb.extendedexchange.item;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
+import moze_intel.projecte.api.proxy.IEMCProxy;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -22,8 +21,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -31,15 +29,15 @@ import java.util.UUID;
 
 public class KnowledgeSharingBookItem extends Item {
     public KnowledgeSharingBookItem() {
-        super(new Properties().stacksTo(1).tab(ModItems.ItemGroups.CREATIVE_TAB));
+        super(new Properties().stacksTo(1));
     }
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> list, TooltipFlag flag) {
         super.appendHoverText(stack, level, list, flag);
 
-        list.add(new TranslatableComponent("item.extendedexchange.knowledge_sharing_book.tooltip.1").withStyle(ChatFormatting.GRAY));
-        list.add(new TranslatableComponent("item.extendedexchange.knowledge_sharing_book.tooltip.2").withStyle(ChatFormatting.GRAY));
+        list.add(Component.translatable("item.extendedexchange.knowledge_sharing_book.tooltip.1").withStyle(ChatFormatting.GRAY));
+        list.add(Component.translatable("item.extendedexchange.knowledge_sharing_book.tooltip.2").withStyle(ChatFormatting.GRAY));
     }
 
     @Override
@@ -76,7 +74,7 @@ public class KnowledgeSharingBookItem extends Item {
             }
 
             playerKnowledge.sync((ServerPlayer) player);
-            player.displayClientMessage(new TranslatableComponent("item.extendedexchange.knowledge_sharing_book.learned", nLearned)
+            player.displayClientMessage(Component.translatable("item.extendedexchange.knowledge_sharing_book.learned", nLearned)
                     .withStyle(ChatFormatting.GREEN), false);
             level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_BREAK, SoundSource.PLAYERS,
                     0.8F, 0.8F + level.random.nextFloat() * 0.4F);

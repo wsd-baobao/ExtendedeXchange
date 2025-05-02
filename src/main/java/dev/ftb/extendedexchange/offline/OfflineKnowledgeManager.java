@@ -128,9 +128,9 @@ public class OfflineKnowledgeManager extends SavedData {
     public static class Listener {
         @SubscribeEvent
         public static void onPlayerConnect(PlayerEvent.PlayerLoggedInEvent event) {
-            if (!event.getPlayer().level.isClientSide()) {
-                event.getPlayer().getCapability(PECapabilities.KNOWLEDGE_CAPABILITY)
-                        .ifPresent(handler -> OfflineKnowledgeManager.getInstance().onPlayerConnect(event.getPlayer(), handler));
+            if (!event.getEntity().level().isClientSide()) {
+                event.getEntity().getCapability(PECapabilities.KNOWLEDGE_CAPABILITY)
+                        .ifPresent(handler -> OfflineKnowledgeManager.getInstance().onPlayerConnect(event.getEntity(), handler));
             }
         }
     }

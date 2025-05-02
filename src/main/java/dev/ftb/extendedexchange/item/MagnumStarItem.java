@@ -16,7 +16,7 @@ public class MagnumStarItem extends ItemPE implements IItemEmcHolder, IBarHelper
     public final Star tier;
 
     public MagnumStarItem(Star tier) {
-        super(new Properties().stacksTo(1).tab(ModItems.ItemGroups.CREATIVE_TAB));
+        super(new Properties().stacksTo(1));
 
         this.tier = tier;
 

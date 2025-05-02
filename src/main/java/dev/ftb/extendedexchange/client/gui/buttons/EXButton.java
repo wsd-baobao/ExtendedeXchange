@@ -7,11 +7,11 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 public abstract class EXButton extends Button implements ITooltipProvider {
     protected ResourceLocation texture;
@@ -21,7 +21,7 @@ public abstract class EXButton extends Button implements ITooltipProvider {
     private List<Component> tooltip = Collections.emptyList();
 
     public EXButton(int x, int y, int width, int height, OnPress onPress) {
-        super(x, y, width, height, TextComponent.EMPTY, onPress);
+        super(x, y, width, height,Component.empty(), onPress, Button.DEFAULT_NARRATION);
     }
 
     @Override
@@ -55,6 +55,7 @@ public abstract class EXButton extends Button implements ITooltipProvider {
 
     @Override
     public void addTooltip(double mouseX, double mouseY, List<Component> curTip, boolean shift) {
+        Logger.getLogger("EXButton").info("Adding tooltip to " + this);
         curTip.addAll(tooltip);
     }
 }

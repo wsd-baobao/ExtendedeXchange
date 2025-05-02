@@ -2,14 +2,15 @@ package dev.ftb.extendedexchange.recipes;
 
 import com.google.gson.JsonObject;
 import moze_intel.projecte.api.ProjectEAPI;
+import moze_intel.projecte.api.proxy.IEMCProxy;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.jetbrains.annotations.Nullable;
 
 public class AlchemyTableRecipe implements Recipe<Container> {
@@ -35,9 +36,14 @@ public class AlchemyTableRecipe implements Recipe<Container> {
     }
 
     @Override
-    public ItemStack assemble(Container container) {
+    public ItemStack assemble(Container container, RegistryAccess registryAccess) {
         return output.copy();
     }
+
+//    @Override
+//    public ItemStack assemble(Container container) {
+//        return output.copy();
+//    }
 
     @Override
     public boolean canCraftInDimensions(int width, int height) {
@@ -45,9 +51,14 @@ public class AlchemyTableRecipe implements Recipe<Container> {
     }
 
     @Override
-    public ItemStack getResultItem() {
+    public ItemStack getResultItem(RegistryAccess registryAccess) {
         return output;
     }
+
+//    @Override
+//    public ItemStack getResultItem() {
+//        return output;
+//    }
 
     @Override
     public ResourceLocation getId() {
@@ -72,7 +83,7 @@ public class AlchemyTableRecipe implements Recipe<Container> {
     public long getTotalCost(ItemStack inputStack) {
         return emcOverride > 0L ?
                 emcOverride :
-                Math.max(MIN_RECIPE_EMC_COST, (ProjectEAPI.getEMCProxy().getValue(inputStack) + ProjectEAPI.getEMCProxy().getValue(output)) * 3L);
+                Math.max(MIN_RECIPE_EMC_COST, (IEMCProxy.INSTANCE.getValue(inputStack) + IEMCProxy.INSTANCE.getValue(output)) * 3L);
     }
 
     public int getCraftingTime() {
@@ -85,8 +96,8 @@ public class AlchemyTableRecipe implements Recipe<Container> {
         json.addProperty("emc_override", emcOverride);
         json.addProperty("crafting_time", craftingTime);
     }
-
-    public static class Serializer<T extends AlchemyTableRecipe> extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<T> {
+//extends IForgeRegistryEntry<RecipeSerializer<?>>
+    public static class Serializer<T extends AlchemyTableRecipe>  implements RecipeSerializer<T> {
         private final IFactory<T> factory;
 
         public Serializer(IFactory<T> factory) {

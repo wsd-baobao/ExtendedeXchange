@@ -4,7 +4,7 @@ import dev.ftb.extendedexchange.block.entity.AbstractEMCBlockEntity;
 import dev.ftb.extendedexchange.block.entity.AbstractLinkBlockEntity;
 import dev.ftb.extendedexchange.block.entity.TickingEXBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -21,14 +21,14 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractEXBlock extends BaseEntityBlock {
     public AbstractEXBlock() {
-        super(Properties.of(Material.STONE).strength(5F).sound(SoundType.STONE));
+        super(Properties.of().mapColor(MapColor.STONE).strength(5F).sound(SoundType.STONE));
     }
 
     public AbstractEXBlock(Properties props) {
@@ -40,10 +40,10 @@ public abstract class AbstractEXBlock extends BaseEntityBlock {
         if (player instanceof ServerPlayer serverPlayer) {
             if (level.getBlockEntity(pos) instanceof AbstractEMCBlockEntity emc && emc instanceof MenuProvider menuProvider) {
                 if (emc instanceof AbstractLinkBlockEntity link && !player.getUUID().equals(link.getOwnerId())) {
-                    player.displayClientMessage(new TextComponent(link.getOwnerName()), true);
+                    player.displayClientMessage(Component.literal(link.getOwnerName()), true);
                     return InteractionResult.FAIL;
                 }
-                NetworkHooks.openGui(serverPlayer, menuProvider, pos);
+                NetworkHooks.openScreen(serverPlayer, menuProvider, pos);
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide());

@@ -10,7 +10,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class ModMenuTypes {
-    public static final DeferredRegister<MenuType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.CONTAINERS, ExtendedExchange.MOD_ID);
+    public static final DeferredRegister<MenuType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.MENU_TYPES, ExtendedExchange.MOD_ID);
 
     public static final RegistryObject<MenuType<PersonalLinkMenu>> PERSONAL_LINK
             = register("personal_link", PersonalLinkMenu::new);

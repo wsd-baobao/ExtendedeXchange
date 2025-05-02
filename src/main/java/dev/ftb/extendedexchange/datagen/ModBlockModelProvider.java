@@ -6,7 +6,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 class ModBlockModelProvider extends BlockModelProvider {
     public ModBlockModelProvider(DataGenerator generator, String modid, ExistingFileHelper existingFileHelper) {
-        super(generator, modid, existingFileHelper);
+        super(generator.getPackOutput(), modid, existingFileHelper);
     }
 
     @Override

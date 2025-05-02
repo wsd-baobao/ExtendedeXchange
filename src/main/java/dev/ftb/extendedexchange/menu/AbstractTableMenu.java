@@ -1,5 +1,6 @@
 package dev.ftb.extendedexchange.menu;
 
+import dev.ftb.extendedexchange.ExtendedExchange;
 import dev.ftb.extendedexchange.block.entity.AbstractEMCBlockEntity;
 import dev.ftb.extendedexchange.network.NetworkHandler;
 import dev.ftb.extendedexchange.network.PacketNotifyKnowledgeChange;
@@ -9,6 +10,7 @@ import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage;
+import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.config.ProjectEConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -60,7 +62,7 @@ public abstract class AbstractTableMenu extends AbstractEXMenu<AbstractEMCBlockE
         Item item = ForgeRegistries.ITEMS.getValue(id);
         if (item != null && item != Items.AIR) {
             BigInteger availableEMC = provider.getEmc();
-            BigInteger emc = BigInteger.valueOf(ProjectEAPI.getEMCProxy().getValue(item));
+            BigInteger emc = BigInteger.valueOf(IEMCProxy.INSTANCE.getValue(item));
             if (emc.equals(BigInteger.ZERO)) {
                 return;
             }
@@ -101,16 +103,17 @@ public abstract class AbstractTableMenu extends AbstractEXMenu<AbstractEMCBlockE
         ItemStack cursorStack = getCarried();
         if (!cursorStack.isEmpty()) {
             if (storedEMConly && cursorStack.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY).isPresent()) {
+                System.out.println("点击shift的情况下。");
                 cursorStack.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY).ifPresent(handler -> {
                     long extracted = handler.extractEmc(cursorStack, handler.getMaximumEmc(cursorStack), IEmcStorage.EmcAction.EXECUTE);
                     provider.setEmc(provider.getEmc().add(BigInteger.valueOf(extracted)));
                     provider.syncEmc((ServerPlayer) player);
                 });
-            } else if (ProjectEAPI.getEMCProxy().hasValue(cursorStack)) {
-                ItemStack fixed = ProjectEAPI.getEMCProxy().getPersistentInfo(ItemInfo.fromStack(cursorStack)).createStack();
+            } else if (IEMCProxy.INSTANCE.hasValue(cursorStack)) {
+                ItemStack fixed = IEMCProxy.INSTANCE.getPersistentInfo(ItemInfo.fromStack(cursorStack)).createStack();
                 if (isItemValid(fixed)) {
                     tryAddKnowledge(fixed);
-                    long toAdd = (long) (ProjectEAPI.getEMCProxy().getValue(fixed) * cursorStack.getCount() * ProjectEConfig.server.difficulty.covalenceLoss.get());
+                    long toAdd = (long) (IEMCProxy.INSTANCE.getValue(fixed) * cursorStack.getCount() * ProjectEConfig.server.difficulty.covalenceLoss.get());
                     provider.setEmc(provider.getEmc().add(BigInteger.valueOf(toAdd)));
                     provider.syncEmc((ServerPlayer) player);
                     setCarried(ItemStack.EMPTY);
@@ -121,14 +124,14 @@ public abstract class AbstractTableMenu extends AbstractEXMenu<AbstractEMCBlockE
 
     private void learnItem() {
         if (!getCarried().isEmpty()) {
-            ItemStack fixed = ProjectEAPI.getEMCProxy().getPersistentInfo(ItemInfo.fromStack(getCarried())).createStack();
+            ItemStack fixed = IEMCProxy.INSTANCE.getPersistentInfo(ItemInfo.fromStack(getCarried())).createStack();
             tryAddKnowledge(fixed);
         }
     }
 
     private void unlearnItem() {
         if (!getCarried().isEmpty()) {
-            ItemStack fixed = ProjectEAPI.getEMCProxy().getPersistentInfo(ItemInfo.fromStack(getCarried())).createStack();
+            ItemStack fixed = IEMCProxy.INSTANCE.getPersistentInfo(ItemInfo.fromStack(getCarried())).createStack();
             if (provider.removeKnowledge(fixed)) {
                 provider.syncKnowledgeChange((ServerPlayer) player, ItemInfo.fromStack(fixed), false);
                 NetworkHandler.sendToPlayer((ServerPlayer) player, new PacketNotifyKnowledgeChange());
@@ -142,18 +145,18 @@ public abstract class AbstractTableMenu extends AbstractEXMenu<AbstractEMCBlockE
         ItemStack stack = slot.getItem();
 
         if (player instanceof ServerPlayer serverPlayer && index >= playerSlotsStart && !stack.isEmpty()) {
-            if (!ProjectEAPI.getEMCProxy().hasValue(stack)) {
+            if (!IEMCProxy.INSTANCE.hasValue(stack)) {
                 return ItemStack.EMPTY;
             }
 
-            ItemStack fixed = ProjectEAPI.getEMCProxy().getPersistentInfo(ItemInfo.fromStack(stack)).createStack();
+            ItemStack fixed = IEMCProxy.INSTANCE.getPersistentInfo(ItemInfo.fromStack(stack)).createStack();
             if (!isItemValid(fixed)) {
                 return ItemStack.EMPTY;
             }
 
             tryAddKnowledge(fixed);
 
-            long toAdd = (long) (ProjectEAPI.getEMCProxy().getValue(stack) * stack.getCount() * ProjectEConfig.server.difficulty.covalenceLoss.get());
+            long toAdd = (long) (IEMCProxy.INSTANCE.getValue(stack) * stack.getCount() * ProjectEConfig.server.difficulty.covalenceLoss.get());
             provider.setEmc(provider.getEmc().add(BigInteger.valueOf(toAdd)));
             provider.syncEmc(serverPlayer);
             slot.set(ItemStack.EMPTY);

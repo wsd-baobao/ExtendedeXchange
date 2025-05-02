@@ -3,13 +3,14 @@ package dev.ftb.extendedexchange.recipes;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 
 public class RecipeHelper {
     static JsonElement serializeOneItemStack(@Nonnull ItemStack stack) {
         JsonObject json = new JsonObject();
-        json.addProperty("item", stack.getItem().getRegistryName().toString());
+        json.addProperty("item", ForgeRegistries.ITEMS.getKey(stack.getItem()).toString());
         if (stack.getCount() > 1) {
             json.addProperty("count", stack.getCount());
         }

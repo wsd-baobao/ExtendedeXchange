@@ -9,10 +9,7 @@ import dev.ftb.extendedexchange.recipes.AlchemyTableRecipe;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -21,6 +18,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.Validate;
 
 import java.util.function.Consumer;
@@ -31,11 +29,15 @@ class ModRecipeProvider extends RecipeProvider {
     // public final Tag<Item> CAST_IRON_GEAR = ItemTags.bind("forge:gears/cast_iron");
 
     public ModRecipeProvider(DataGenerator generatorIn) {
-        super(generatorIn);
+        super(generatorIn.getPackOutput());
     }
 
+//    @Override
+//    protected void buildRecipes(Consumer<FinishedRecipe> writer) {
+//
+//    }
     @Override
-    protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
         /*
         ShapedRecipeBuilder.shaped(FTBJarModItems.CAST_IRON_BLOCK.get())
                 .unlockedBy("has_item", has(CAST_IRON_INGOT))
@@ -61,7 +63,7 @@ class ModRecipeProvider extends RecipeProvider {
             if (matter.hasMatterItem && matter.getPrev() != null) {
                 Item prevMatterItem = matter.getPrev().getItem().get();
 
-                ShapedRecipeBuilder.shaped(matter.getItem().get())
+                ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,matter.getItem().get())
                         .unlockedBy("has_item", has(prevMatterItem))
                         .group(EXDataGen.MODID + ":matter/" + matter.name)
                         .pattern("FFF")
@@ -71,7 +73,7 @@ class ModRecipeProvider extends RecipeProvider {
                         .define('M', prevMatterItem)
                         .save(consumer, rl("matter_h/" + matter.name));
 
-                ShapedRecipeBuilder.shaped(matter.getItem().get())
+                ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,matter.getItem().get())
                         .unlockedBy("has_item", has(prevMatterItem))
                         .group(EXDataGen.MODID + ":matter/" + matter.name)
                         .pattern("FMF")
@@ -94,21 +96,21 @@ class ModRecipeProvider extends RecipeProvider {
             if (prev != null) {
                 Item matterItem = matter.getItem().get();
 
-                ShapelessRecipeBuilder.shapeless(collector)
+                ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS,collector)
                         .unlockedBy("has_item", has(matterItem))
                         .group(EXDataGen.MODID + ":matter/" + matter.name)
                         .requires(ModItems.COLLECTOR.get(prev).get())
                         .requires(matterItem)
                         .save(consumer, rl("collector/" + matter.name));
 
-                ShapelessRecipeBuilder.shapeless(relay)
+                ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS,relay)
                         .unlockedBy("has_item", has(matterItem))
                         .group(EXDataGen.MODID + ":matter/" + matter.name)
                         .requires(ModItems.RELAY.get(prev).get())
                         .requires(matterItem)
                         .save(consumer, rl("relay/" + matter.name));
 
-                ShapedRecipeBuilder.shaped(powerFlower)
+                ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,powerFlower)
                         .unlockedBy("has_item", has(matterItem))
                         .group(EXDataGen.MODID + ":matter/" + matter.name)
                         .pattern("ADA")
@@ -120,7 +122,7 @@ class ModRecipeProvider extends RecipeProvider {
                         .save(consumer, rl("power_flower/" + matter.name + "_upgrade"));
             }
 
-            ShapedRecipeBuilder.shaped(compressedCollector)
+            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,compressedCollector)
                     .unlockedBy("has_item", has(collector))
                     .group(EXDataGen.MODID + ":matter/" + matter.name)
                     .pattern("CCC")
@@ -129,7 +131,7 @@ class ModRecipeProvider extends RecipeProvider {
                     .define('C', collector)
                     .save(consumer, rl("compressed_collector/" + matter.name));
 
-            ShapedRecipeBuilder.shaped(powerFlower)
+            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,powerFlower)
                     .unlockedBy("has_item", has(compressedCollector))
                     .group(EXDataGen.MODID + ":matter/" + matter.name)
                     .pattern("CLC")
@@ -146,7 +148,7 @@ class ModRecipeProvider extends RecipeProvider {
                 Item prevMagnum = ModItems.MAGNUM_STAR.get(star.getPrev()).get();
                 Item prevColossal = ModItems.COLOSSAL_STAR.get(star.getPrev()).get();
 
-                ShapelessRecipeBuilder.shapeless(ModItems.MAGNUM_STAR.get(star).get())
+                ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS,ModItems.MAGNUM_STAR.get(star).get())
                         .unlockedBy("has_item", has(prevMagnum))
                         .group(EXDataGen.MODID + ":magnum_star")
                         .requires(prevMagnum)
@@ -155,7 +157,7 @@ class ModRecipeProvider extends RecipeProvider {
                         .requires(prevMagnum)
                         .save(consumer, rl("magnum_star/" + star.getName()));
 
-                ShapelessRecipeBuilder.shapeless(ModItems.COLOSSAL_STAR.get(star).get())
+                ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS,ModItems.COLOSSAL_STAR.get(star).get())
                         .unlockedBy("has_item", has(prevColossal))
                         .group(EXDataGen.MODID + ":colossal_star")
                         .requires(prevColossal)
@@ -169,7 +171,7 @@ class ModRecipeProvider extends RecipeProvider {
         Item startMagnum = PEItems.KLEIN_STAR_OMEGA.get();
         Item startColossal = ModItems.MAGNUM_STAR.get(Star.OMEGA).get();
 
-        ShapelessRecipeBuilder.shapeless(ModItems.MAGNUM_STAR.get(Star.EIN).get())
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS,ModItems.MAGNUM_STAR.get(Star.EIN).get())
                 .unlockedBy("has_item", has(startMagnum))
                 .group(EXDataGen.MODID + ":magnum_star")
                 .requires(startMagnum)
@@ -178,7 +180,7 @@ class ModRecipeProvider extends RecipeProvider {
                 .requires(startMagnum)
                 .save(consumer, rl("magnum_star/ein"));
 
-        ShapelessRecipeBuilder.shapeless(ModItems.COLOSSAL_STAR.get(Star.EIN).get())
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS,ModItems.COLOSSAL_STAR.get(Star.EIN).get())
                 .unlockedBy("has_item", has(startColossal))
                 .group(EXDataGen.MODID + ":colossal_star")
                 .requires(startColossal)
@@ -187,7 +189,7 @@ class ModRecipeProvider extends RecipeProvider {
                 .requires(startColossal)
                 .save(consumer, rl("colossal_star/ein"));
 
-        ShapedRecipeBuilder.shaped(ModItems.ALCHEMY_TABLE.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.ALCHEMY_TABLE.get())
                 .unlockedBy("has_item", has(ModItems.STONE_TABLE.get()))
                 .group(EXDataGen.MODID + ":alchemy_table")
                 .pattern("123")
@@ -202,7 +204,7 @@ class ModRecipeProvider extends RecipeProvider {
                 .define('L', Tags.Items.RODS_WOODEN)
                 .save(consumer, rl("alchemy_table"));
 
-        ShapedRecipeBuilder.shaped(ModItems.ARCANE_TABLET.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.ARCANE_TABLET.get())
                 .unlockedBy("has_item", has(ModItems.STONE_TABLE.get()))
                 .group(EXDataGen.MODID + ":arcane_tablet")
                 .pattern("TWT")
@@ -215,7 +217,7 @@ class ModRecipeProvider extends RecipeProvider {
                 .define('C', Tags.Items.CHESTS_WOODEN)
                 .save(consumer, rl("arcane_tablet"));
 
-        ShapedRecipeBuilder.shaped(ModItems.COMPRESSED_REFINED_LINK.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.COMPRESSED_REFINED_LINK.get())
                 .unlockedBy("has_item", has(ModItems.REFINED_LINK.get()))
                 .group(EXDataGen.MODID + ":link")
                 .pattern("LLL")
@@ -223,7 +225,7 @@ class ModRecipeProvider extends RecipeProvider {
                 .define('L', ModItems.REFINED_LINK.get())
                 .save(consumer, rl("compressed_refined_link"));
 
-        ShapedRecipeBuilder.shaped(ModItems.ENERGY_LINK.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.ENERGY_LINK.get())
                 .unlockedBy("has_item", has(PEItems.RED_MATTER))
                 .group(EXDataGen.MODID + ":link")
                 .pattern("LMH")
@@ -236,7 +238,7 @@ class ModRecipeProvider extends RecipeProvider {
                 .define('R', PEItems.RED_MATTER)
                 .save(consumer, rl("energy_link"));
 
-        ShapedRecipeBuilder.shaped(ModItems.FINAL_STAR.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.FINAL_STAR.get())
                 .unlockedBy("has_item", has(ModItems.POWER_FLOWER.get(Matter.FINAL).get()))
                 .group(EXDataGen.MODID + ":star")
                 .pattern("PPP")
@@ -246,7 +248,7 @@ class ModRecipeProvider extends RecipeProvider {
                 .define('E', Items.DRAGON_EGG)
                 .save(consumer, rl("final_star"));
 
-        ShapedRecipeBuilder.shaped(ModItems.FINAL_STAR_SHARD.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.FINAL_STAR_SHARD.get())
                 .unlockedBy("has_item", has(ModItems.COLOSSAL_STAR.get(Star.OMEGA).get()))
                 .group(EXDataGen.MODID + ":star")
                 .pattern("CCC")
@@ -256,7 +258,7 @@ class ModRecipeProvider extends RecipeProvider {
                 .define('S', Items.NETHER_STAR)
                 .save(consumer, rl("final_star_shard"));
 
-        ShapedRecipeBuilder.shaped(ModItems.KNOWLEDGE_SHARING_BOOK.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.KNOWLEDGE_SHARING_BOOK.get())
                 .unlockedBy("has_item", has(ModItems.MATTER.get(Matter.VIOLET).get()))
                 .group(EXDataGen.MODID + ":tome")
                 .pattern("RNR")
@@ -267,7 +269,7 @@ class ModRecipeProvider extends RecipeProvider {
                 .define('N', Items.NETHER_STAR)
                 .save(consumer, rl("knowledge_sharing_book"));
 
-        ShapedRecipeBuilder.shaped(ModItems.PERSONAL_LINK.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.PERSONAL_LINK.get())
                 .unlockedBy("has_item", has(ModItems.ENERGY_LINK.get()))
                 .group(EXDataGen.MODID + ":link")
                 .pattern("RBR")
@@ -278,7 +280,7 @@ class ModRecipeProvider extends RecipeProvider {
                 .define('C', PEBlocks.CONDENSER_MK2)
                 .save(consumer, rl("personal_link"));
 
-        ShapedRecipeBuilder.shaped(ModItems.REFINED_LINK.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.REFINED_LINK.get())
                 .unlockedBy("has_item", has(ModItems.PERSONAL_LINK.get()))
                 .group(EXDataGen.MODID + ":link")
                 .pattern("LLL")
@@ -287,7 +289,7 @@ class ModRecipeProvider extends RecipeProvider {
                 .define('L', ModItems.PERSONAL_LINK.get())
                 .save(consumer, rl("refined_link"));
 
-        ShapedRecipeBuilder.shaped(ModItems.STONE_TABLE.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.STONE_TABLE.get())
                 .unlockedBy("has_item", has(PEItems.PHILOSOPHERS_STONE))
                 .group(EXDataGen.MODID + ":stone_table")
                 .pattern("BBB")
@@ -297,7 +299,7 @@ class ModRecipeProvider extends RecipeProvider {
                 .define('P', PEItems.PHILOSOPHERS_STONE)
                 .save(consumer, rl("stone_table_1"));
 
-        ShapedRecipeBuilder.shaped(PEItems.TOME_OF_KNOWLEDGE)
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,PEItems.TOME_OF_KNOWLEDGE)
                 .unlockedBy("has_item", has(ModItems.KNOWLEDGE_SHARING_BOOK.get()))
                 .group(EXDataGen.MODID + ":stone_table")
                 .pattern("BBB")
@@ -307,7 +309,7 @@ class ModRecipeProvider extends RecipeProvider {
                 .define('S', ModItems.FINAL_STAR_SHARD.get())
                 .save(consumer, rl("tome_of_knowledge"));
 
-        ShapedRecipeBuilder.shaped(ModItems.COLLECTOR.get(Matter.BASIC).get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.COLLECTOR.get(Matter.BASIC).get())
                 .unlockedBy("has_item", has(PEBlocks.AETERNALIS_FUEL))
                 .group(EXDataGen.MODID + ":matter/basic")
                 .pattern("GSG")
@@ -318,23 +320,23 @@ class ModRecipeProvider extends RecipeProvider {
                 .define('A', PEBlocks.AETERNALIS_FUEL)
                 .define('F', Items.FURNACE)
                 .save(consumer, rl("collector/basic"));
-        ShapelessRecipeBuilder.shapeless(ModItems.COLLECTOR.get(Matter.BASIC).get())
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS,ModItems.COLLECTOR.get(Matter.BASIC).get())
                 .unlockedBy("has_item", has(PEBlocks.COLLECTOR))
                 .group(EXDataGen.MODID + ":matter/basic")
                 .requires(PEBlocks.COLLECTOR)
                 .save(consumer, rl("collector/basic_2"));
-        ShapelessRecipeBuilder.shapeless(ModItems.COLLECTOR.get(Matter.DARK).get())
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS,ModItems.COLLECTOR.get(Matter.DARK).get())
                 .unlockedBy("has_item", has(PEBlocks.COLLECTOR_MK2))
                 .group(EXDataGen.MODID + ":matter/dark")
                 .requires(PEBlocks.COLLECTOR_MK2)
                 .save(consumer, rl("collector/dark_2"));
-        ShapelessRecipeBuilder.shapeless(ModItems.COLLECTOR.get(Matter.RED).get())
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS,ModItems.COLLECTOR.get(Matter.RED).get())
                 .unlockedBy("has_item", has(PEBlocks.COLLECTOR_MK3))
                 .group(EXDataGen.MODID + ":matter/red")
                 .requires(PEBlocks.COLLECTOR_MK3)
                 .save(consumer, rl("collector/red_2"));
 
-        ShapedRecipeBuilder.shaped(ModItems.RELAY.get(Matter.BASIC).get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS,ModItems.RELAY.get(Matter.BASIC).get())
                 .unlockedBy("has_item", has(PEBlocks.AETERNALIS_FUEL))
                 .group(EXDataGen.MODID + ":matter/basic")
                 .pattern("OSO")
@@ -344,17 +346,17 @@ class ModRecipeProvider extends RecipeProvider {
                 .define('S', Tags.Items.GLASS)
                 .define('A', PEBlocks.AETERNALIS_FUEL)
                 .save(consumer, rl("relay/basic"));
-        ShapelessRecipeBuilder.shapeless(ModItems.RELAY.get(Matter.BASIC).get())
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS,ModItems.RELAY.get(Matter.BASIC).get())
                 .unlockedBy("has_item", has(PEBlocks.RELAY))
                 .group(EXDataGen.MODID + ":matter/basic")
                 .requires(PEBlocks.RELAY)
                 .save(consumer, rl("relay/basic_2"));
-        ShapelessRecipeBuilder.shapeless(ModItems.RELAY.get(Matter.DARK).get())
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS,ModItems.RELAY.get(Matter.DARK).get())
                 .unlockedBy("has_item", has(PEBlocks.RELAY_MK2))
                 .group(EXDataGen.MODID + ":matter/dark")
                 .requires(PEBlocks.RELAY_MK2)
                 .save(consumer, rl("relay/dark_2"));
-        ShapelessRecipeBuilder.shapeless(ModItems.RELAY.get(Matter.RED).get())
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS,ModItems.RELAY.get(Matter.RED).get())
                 .unlockedBy("has_item", has(PEBlocks.RELAY_MK3))
                 .group(EXDataGen.MODID + ":matter/red")
                 .requires(PEBlocks.RELAY_MK3)
@@ -438,7 +440,7 @@ class ModRecipeProvider extends RecipeProvider {
     }
 
     private void alchemyStep(Consumer<FinishedRecipe> consumer, ItemLike in, ItemStack out) {
-        String name = "alchemy/" + in.asItem().getRegistryName().getPath() + "_to_" + out.getItem().getRegistryName().getPath();
+        String name = "alchemy/" + ForgeRegistries.ITEMS.getKey(in.asItem()).getPath() + "_to_" + ForgeRegistries.ITEMS.getKey(out.getItem()).getPath();
         ResourceLocation id = rl(name);
         alchemyRecipe(id, Ingredient.of(in), out).build(consumer, id);
     }
@@ -451,4 +453,6 @@ class ModRecipeProvider extends RecipeProvider {
         return new AlchemyTableRecipeBuilder(new AlchemyTableRecipe(id, input, output, emcOverride, craftingTime))
                 .addCriterion(Criteria.has(ModItems.ALCHEMY_TABLE.get()));
     }
+
+    
 }

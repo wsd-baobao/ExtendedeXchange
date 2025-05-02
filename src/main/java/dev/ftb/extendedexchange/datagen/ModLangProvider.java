@@ -9,7 +9,7 @@ import net.minecraftforge.common.data.LanguageProvider;
 
 class ModLangProvider extends LanguageProvider {
     public ModLangProvider(DataGenerator gen, String modid, String locale) {
-        super(gen, modid, locale);
+        super(gen.getPackOutput(), modid, locale);
     }
 
     @Override

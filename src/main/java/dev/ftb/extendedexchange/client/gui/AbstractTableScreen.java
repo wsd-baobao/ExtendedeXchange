@@ -1,6 +1,5 @@
 package dev.ftb.extendedexchange.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.extendedexchange.block.entity.AbstractEMCBlockEntity;
 import dev.ftb.extendedexchange.client.gui.buttons.ExtractItemButton;
 import dev.ftb.extendedexchange.config.ConfigHelper;
@@ -9,15 +8,17 @@ import dev.ftb.extendedexchange.menu.AbstractTableMenu;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.capabilities.PECapabilities;
+import moze_intel.projecte.api.proxy.IEMCProxy;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.glfw.GLFW;
 
@@ -32,7 +33,7 @@ public abstract class AbstractTableScreen<C extends AbstractTableMenu> extends A
     // static so they persist across GUI invocations
     private static int staticPage = 0;
     private static String staticSearch = "";
-
+    
     private final List<ItemStack> validItems = new ArrayList<>();
     protected final List<ExtractItemButton> extractButtons = new ArrayList<>();
     private EditBox searchField;
@@ -48,7 +49,7 @@ public abstract class AbstractTableScreen<C extends AbstractTableMenu> extends A
         super.init();
 
         Rect2i tb = searchFieldPos();
-        searchField = new EditBox(font, tb.getX(), tb.getY(), tb.getWidth(), tb.getHeight(), TextComponent.EMPTY);
+        searchField = new EditBox(font, tb.getX(), tb.getY(), tb.getWidth(), tb.getHeight(),Component.empty());
         searchField.setTextColor(0xFFFFFFFF);
         searchField.setTextColorUneditable(0xFF808080);
         searchField.setBordered(false);
@@ -67,6 +68,7 @@ public abstract class AbstractTableScreen<C extends AbstractTableMenu> extends A
         addRenderableWidget(extractItemButton);
     }
 
+
     @Override
     protected void containerTick() {
         if (!staticSearch.equals(searchField.getValue())) {
@@ -76,6 +78,7 @@ public abstract class AbstractTableScreen<C extends AbstractTableMenu> extends A
             if (ConfigHelper.client().general.searchType.get().jeiSync) JEIHooks.handleJEISync(staticSearch);
         }
     }
+
 
 
     @Override
@@ -90,16 +93,25 @@ public abstract class AbstractTableScreen<C extends AbstractTableMenu> extends A
             searchField.setValue("");
             return true;
         }
+        System.out.println(button);
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
-    protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         Minecraft.getInstance().player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY).ifPresent(p -> {
             String s = EMCFormat.INSTANCE.format(p.getEmc());
-            font.draw(poseStack, s, ((imageWidth - font.width(s)) / 2f),  -9f, 0xFFB5B5B5);
+//            font.draw(poseStack, s, ((imageWidth - font.width(s)) / 2f),  -9f, 0xFFB5B5B5);
+            guiGraphics.drawString(font, s, ((imageWidth - font.width(s)) / 2f),  -9f, 0xFFB5B5B5,  false);
         });
     }
+
+//    protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
+//        Minecraft.getInstance().player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY).ifPresent(p -> {
+//            String s = EMCFormat.INSTANCE.format(p.getEmc());
+//            font.draw(poseStack, s, ((imageWidth - font.width(s)) / 2f),  -9f, 0xFFB5B5B5);
+//        });
+//    }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
@@ -107,7 +119,7 @@ public abstract class AbstractTableScreen<C extends AbstractTableMenu> extends A
             this.minecraft.player.closeContainer();
         }
         if (this.searchField.keyPressed(keyCode, scanCode, modifiers) || this.searchField.canConsumeInput()) {
-            if (keyCode == GLFW.GLFW_KEY_TAB) changeFocus(!Screen.hasShiftDown());
+            if (keyCode == GLFW.GLFW_KEY_TAB) changeFocus(getCurrentFocusPath());
             return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
@@ -145,14 +157,14 @@ public abstract class AbstractTableScreen<C extends AbstractTableMenu> extends A
         for (ItemInfo itemInfo : menu.getProvider().getKnowledge()) {
             ItemStack stack = itemInfo.createStack();
             if (!stack.isEmpty() && menu.isItemValid(stack) && (srchStr.isEmpty() || mod ?
-                    itemInfo.getItem().getRegistryName().getNamespace().startsWith(srchStr) :
+                    ForgeRegistries.ITEMS.getKey(itemInfo.getItem()).getNamespace().startsWith(srchStr) :
                     StringUtils.contains(trim(stack.getDisplayName().getString()), srchStr)))
             {
-                validItems.add(ProjectEAPI.getEMCProxy().getPersistentInfo(itemInfo).createStack());
+                validItems.add(IEMCProxy.INSTANCE.getPersistentInfo(itemInfo).createStack());
             }
         }
 
-        validItems.sort(Comparator.comparingLong(o -> ProjectEAPI.getEMCProxy().getValue(o)));
+        validItems.sort(Comparator.comparingLong(o -> IEMCProxy.INSTANCE.getValue(o)));
 //        Collections.reverse(validItems);
         updateDisplayedItems();
     }

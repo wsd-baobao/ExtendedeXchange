@@ -3,21 +3,29 @@ package dev.ftb.extendedexchange.datagen;
 import dev.ftb.extendedexchange.EXTags;
 import dev.ftb.extendedexchange.item.ModItems;
 import moze_intel.projecte.gameObjs.PETags;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.data.PackOutput;
+
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.CompletableFuture;
 
 class ModItemTagsProvider extends ItemTagsProvider {
-    public ModItemTagsProvider(DataGenerator dataGenerator, BlockTagsProvider blockTagProvider, String modId, ExistingFileHelper existingFileHelper) {
-        super(dataGenerator, blockTagProvider, modId, existingFileHelper);
+
+
+    public ModItemTagsProvider(PackOutput arg, CompletableFuture<HolderLookup.Provider> completableFuture, CompletableFuture<TagLookup<Block>> completableFuture2, String modId, @Nullable ExistingFileHelper existingFileHelper) {
+        super(arg, completableFuture, completableFuture2, modId, existingFileHelper);
     }
 
     @Override
-    protected void addTags() {
+    protected void addTags(HolderLookup.Provider provider) {
         ModItems.MAGNUM_STAR.values().forEach(ro -> tag(PETags.Items.CURIOS_KLEIN_STAR).add(ro.get()));
         ModItems.COLOSSAL_STAR.values().forEach(ro -> tag(PETags.Items.CURIOS_KLEIN_STAR).add(ro.get()));
 
@@ -56,4 +64,5 @@ class ModItemTagsProvider extends ItemTagsProvider {
                 Items.GHAST_TEAR
         );
     }
+
 }

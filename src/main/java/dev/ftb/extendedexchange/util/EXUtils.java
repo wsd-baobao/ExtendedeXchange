@@ -5,6 +5,7 @@ import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.event.PlayerAttemptLearnEvent;
+import moze_intel.projecte.api.proxy.IEMCProxy;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -29,13 +30,13 @@ public class EXUtils {
     }
 
     public static KnowledgeAddResult addKnowledge(Player player, IKnowledgeProvider knowledgeProvider, ItemStack stack) {
-        if (stack.isEmpty() || !ProjectEAPI.getEMCProxy().hasValue(stack)) {
+        if (stack.isEmpty() || !IEMCProxy.INSTANCE.hasValue(stack)) {
             return KnowledgeAddResult.NOT_ADDED;
         }
 
         if (!knowledgeProvider.hasKnowledge(stack)) {
             ItemInfo info = ItemInfo.fromStack(stack);
-            ItemInfo cleaned = ProjectEAPI.getEMCProxy().getPersistentInfo(info);
+            ItemInfo cleaned = IEMCProxy.INSTANCE.getPersistentInfo(info);
             if (MinecraftForge.EVENT_BUS.post(new PlayerAttemptLearnEvent(player, info, cleaned))) {
                 return KnowledgeAddResult.NOT_ADDED;
             }

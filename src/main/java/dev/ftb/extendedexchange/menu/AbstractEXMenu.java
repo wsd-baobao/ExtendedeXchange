@@ -21,7 +21,7 @@ public abstract class AbstractEXMenu<T extends BlockEntity> extends AbstractCont
         this.blockPos = blockPos;
 
         if (blockPos != null) {
-            BlockEntity be0 = invPlayer.player.level.getBlockEntity(blockPos);
+            BlockEntity be0 = invPlayer.player.level().getBlockEntity(blockPos);
             if (be0 != null && blockEntityClass().isAssignableFrom(be0.getClass())) {
                 //noinspection unchecked
                 blockEntity = (T) be0;  // should be safe: we have done an isAssignableFrom()

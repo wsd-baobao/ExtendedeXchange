@@ -3,7 +3,6 @@ package dev.ftb.extendedexchange.item;
 import dev.ftb.extendedexchange.menu.ArcaneTabletMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -23,14 +22,16 @@ import java.util.List;
 
 public class ArcaneTabletItem extends Item {
     public ArcaneTabletItem() {
-        super(new Properties().stacksTo(1).tab(ModItems.ItemGroups.CREATIVE_TAB));
+        super(new Properties().stacksTo(1)
+//                .tab(ModItems.ItemGroups.CREATIVE_TAB)
+        );
     }
 
     @Override
     @Nonnull
     public InteractionResultHolder<ItemStack> use(@Nonnull Level world, @Nonnull Player player, @Nonnull InteractionHand hand) {
         if (!world.isClientSide) {
-            NetworkHooks.openGui((ServerPlayer) player, new ContainerProvider(hand), (buf) -> buf.writeEnum(hand));
+            NetworkHooks.openScreen((ServerPlayer) player, new ContainerProvider(hand), (buf) -> buf.writeEnum(hand));
         }
 
         return InteractionResultHolder.success(player.getItemInHand(hand));
@@ -39,7 +40,7 @@ public class ArcaneTabletItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> list, TooltipFlag flag) {
         super.appendHoverText(stack, level, list, flag);
-        list.add(new TranslatableComponent("item.extendedexchange.arcane_tablet.tooltip").withStyle(ChatFormatting.GRAY));
+        list.add(Component.translatable("item.extendedexchange.arcane_tablet.tooltip").withStyle(ChatFormatting.GRAY));
     }
 
     private record ContainerProvider(InteractionHand hand) implements MenuProvider {
@@ -51,7 +52,7 @@ public class ArcaneTabletItem extends Item {
         @Override
         @Nonnull
         public Component getDisplayName() {
-            return new TranslatableComponent("item.extendedexchange.arcane_tablet");
+            return Component.translatable("item.extendedexchange.arcane_tablet");
         }
     }
 }

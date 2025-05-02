@@ -7,10 +7,11 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.ForgeRegistries;
 
 class ModBlockStateProvider extends BlockStateProvider {
     public ModBlockStateProvider(DataGenerator gen, String modid, ExistingFileHelper exFileHelper) {
-        super(gen, modid, exFileHelper);
+        super(gen.getPackOutput(), modid, exFileHelper);
     }
 
     @Override
@@ -21,9 +22,9 @@ class ModBlockStateProvider extends BlockStateProvider {
         simpleBlock(ModBlocks.COMPRESSED_REFINED_LINK.get());
 
         ModBlocks.COLLECTOR.forEach((k, v) ->
-                simpleBlock(v.get(), models().cubeAll(v.get().getRegistryName().getPath(), modLoc("block/collector/" + k.name))));
+                simpleBlock(v.get(), models().cubeAll(ForgeRegistries.BLOCKS.getKey(v.get()).getPath(), modLoc("block/collector/" + k.name))));
         ModBlocks.RELAY.forEach((k, v) ->
-                simpleBlock(v.get(), models().cubeAll(v.get().getRegistryName().getPath(), modLoc("block/relay/" + k.name))));
+                simpleBlock(v.get(), models().cubeAll(ForgeRegistries.BLOCKS.getKey(v.get()).getPath(), modLoc("block/relay/" + k.name))));
         ModBlocks.POWER_FLOWER.forEach((k, v) ->
                 simpleBlock(v.get(), models().getBuilder(k.name + "_power_flower").parent(models().getExistingFile(modLoc("block/power_flower"))).texture("collector", modLoc("block/collector/" + k.name)).texture("relay", modLoc("block/relay/" + k.name))));
 

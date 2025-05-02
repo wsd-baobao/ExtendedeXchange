@@ -2,19 +2,14 @@ package dev.ftb.extendedexchange.block;
 
 import dev.ftb.extendedexchange.block.entity.AlchemyTableBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Random;
 
 public class AlchemyTableBlock extends AbstractEXBlock {
     public static final VoxelShape SHAPE = Shapes.or(
@@ -26,7 +21,7 @@ public class AlchemyTableBlock extends AbstractEXBlock {
     );
 
     public AlchemyTableBlock() {
-        super(Properties.of(Material.STONE).strength(1F).sound(SoundType.STONE).noOcclusion());
+        super(Properties.of().strength(1F).sound(SoundType.STONE).noOcclusion());
     }
 
     @Nullable
@@ -41,15 +36,15 @@ public class AlchemyTableBlock extends AbstractEXBlock {
         return SHAPE;
     }
 
-    @Override
-    public void animateTick(BlockState state, Level level, BlockPos pos, Random random) {
-        double x = pos.getX();
-        double y = pos.getY() + 1.15D;
-        double z = pos.getZ();
-
-        level.addParticle(ParticleTypes.FLAME, x + 2.5D / 16D, y, z + 2.5D / 16D, 0D, 0D, 0D);
-        level.addParticle(ParticleTypes.FLAME, x + 13.5D / 16D, y, z + 13.5D / 16D, 0D, 0D, 0D);
-        level.addParticle(ParticleTypes.FLAME, x + 13.5D / 16D, y, z + 2.5D / 16D, 0D, 0D, 0D);
-        level.addParticle(ParticleTypes.FLAME, x + 2.5D / 16D, y, z + 13.5D / 16D, 0D, 0D, 0D);
-    }
+//    @Override
+//    public void animateTick(BlockState state, Level level, BlockPos pos, Random random) {
+//        double x = pos.getX();
+//        double y = pos.getY() + 1.15D;
+//        double z = pos.getZ();
+//
+//        level.addParticle(ParticleTypes.FLAME, x + 2.5D / 16D, y, z + 2.5D / 16D, 0D, 0D, 0D);
+//        level.addParticle(ParticleTypes.FLAME, x + 13.5D / 16D, y, z + 13.5D / 16D, 0D, 0D, 0D);
+//        level.addParticle(ParticleTypes.FLAME, x + 13.5D / 16D, y, z + 2.5D / 16D, 0D, 0D, 0D);
+//        level.addParticle(ParticleTypes.FLAME, x + 2.5D / 16D, y, z + 13.5D / 16D, 0D, 0D, 0D);
+//    }
 }

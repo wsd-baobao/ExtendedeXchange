@@ -7,6 +7,7 @@ import moze_intel.projecte.api.block_entity.IDMPedestal;
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage;
 import moze_intel.projecte.api.capabilities.item.IItemEmcHolder;
 import moze_intel.projecte.api.capabilities.item.IPedestalItem;
+import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.capability.EmcHolderItemCapabilityWrapper;
 import moze_intel.projecte.capability.PedestalItemCapabilityWrapper;
 import moze_intel.projecte.gameObjs.PETags;
@@ -16,7 +17,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
@@ -36,7 +36,7 @@ import java.util.List;
 
 public class FinalStarItem extends ItemPE implements IItemEmcHolder, IPedestalItem {
     public FinalStarItem() {
-        super(new Properties().stacksTo(1).tab(ModItems.ItemGroups.CREATIVE_TAB));
+        super(new Properties().stacksTo(1));
 
         addItemCapability(EmcHolderItemCapabilityWrapper::new);
         addItemCapability(PedestalItemCapabilityWrapper::new);
@@ -47,7 +47,7 @@ public class FinalStarItem extends ItemPE implements IItemEmcHolder, IPedestalIt
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> list, TooltipFlag flag) {
         super.appendHoverText(stack, level, list, flag);
 
-        list.add(new TranslatableComponent("item.extendedexchange.final_star.tooltip").withStyle(ChatFormatting.GRAY));
+        list.add(Component.translatable("item.extendedexchange.final_star.tooltip").withStyle(ChatFormatting.GRAY));
     }
 
 //    @Override
@@ -82,9 +82,9 @@ public class FinalStarItem extends ItemPE implements IItemEmcHolder, IPedestalIt
                 for (Direction facing : EXUtils.DIRECTIONS) {
                     if (facing != Direction.UP) {
                         BlockEntity be = level.getBlockEntity(blockPos.relative(facing));
-                        boolean inserted = be != null && be.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite()).map(handler -> {
+                        boolean inserted = be != null && be.getCapability(ForgeCapabilities.ITEM_HANDLER, facing.getOpposite()).map(handler -> {
                             ItemStack stack = items.get(level.random.nextInt(items.size())).getItem();
-                            if (ConfigHelper.server().general.finalStarCopiesAnyItem.get() || ProjectEAPI.getEMCProxy().hasValue(stack)) {
+                            if (ConfigHelper.server().general.finalStarCopiesAnyItem.get() || IEMCProxy.INSTANCE.hasValue(stack)) {
                                 ItemStack toInsert = ItemHandlerHelper.copyStackWithSize(stack, stack.getMaxStackSize());
                                 if (!ConfigHelper.server().general.finalStarCopiesNBT.get() && toInsert.hasTag() && !toInsert.is(PETags.Items.NBT_WHITELIST)) {
                                     toInsert.setTag(new CompoundTag());
@@ -104,7 +104,7 @@ public class FinalStarItem extends ItemPE implements IItemEmcHolder, IPedestalIt
 
     @Override
     public @NotNull List<Component> getPedestalDescription() {
-        return List.of(new TranslatableComponent("item.extendedexchange.final_star.pedestal"));
+        return List.of(Component.translatable("item.extendedexchange.final_star.pedestal"));
     }
 
     @Override

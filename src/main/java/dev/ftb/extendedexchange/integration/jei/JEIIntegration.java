@@ -21,6 +21,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @JeiPlugin
 public class JEIIntegration implements IModPlugin {
@@ -72,6 +73,7 @@ public class JEIIntegration implements IModPlugin {
 
     @Override
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
+        System.out.println("JEI is available");
         runtime = jeiRuntime;
     }
 

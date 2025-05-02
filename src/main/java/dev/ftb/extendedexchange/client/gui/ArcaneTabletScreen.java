@@ -1,15 +1,14 @@
 package dev.ftb.extendedexchange.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.extendedexchange.ExtendedExchange;
 import dev.ftb.extendedexchange.client.gui.buttons.ArrowButton;
 import dev.ftb.extendedexchange.client.gui.buttons.ExtractItemButton;
 import dev.ftb.extendedexchange.client.gui.buttons.HighlightButton;
 import dev.ftb.extendedexchange.client.gui.buttons.SearchTypeButton;
 import dev.ftb.extendedexchange.menu.ArcaneTabletMenu;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
@@ -46,16 +45,16 @@ public class ArcaneTabletScreen extends AbstractTableScreen<ArcaneTabletMenu> {
         addExtractButton(new ExtractItemButton(leftPos + 80, topPos + 116, menu.getProvider()));
 
         addRenderableWidget(new HighlightButton(leftPos + 9, topPos + 116)
-                .withTag("learn").withTooltip(new TranslatableComponent("block.extendedexchange.stone_table.learn")));
+                .withTag("learn").withTooltip(Component.translatable("block.extendedexchange.stone_table.learn")));
         addRenderableWidget(new HighlightButton(leftPos + 153, topPos + 116)
-                .withTag("unlearn").withTooltip(new TranslatableComponent("block.extendedexchange.stone_table.unlearn")));
+                .withTag("unlearn").withTooltip(Component.translatable("block.extendedexchange.stone_table.unlearn")));
 
         addRenderableWidget(new HighlightButton(leftPos - 71, topPos + 16, 9, 9)
-                .withTag("rotate").withTooltip(new TranslatableComponent("gui.extendedexchange.arcane_tablet.rotate")));
+                .withTag("rotate").withTooltip(Component.translatable("gui.extendedexchange.arcane_tablet.rotate")));
         addRenderableWidget(new HighlightButton(leftPos - 71, topPos + 26, 9, 9)
-                .withTag("balance").withTooltip(new TranslatableComponent("gui.extendedexchange.arcane_tablet.balance")));
+                .withTag("balance").withTooltip(Component.translatable("gui.extendedexchange.arcane_tablet.balance")));
         addRenderableWidget(new HighlightButton(leftPos - 71, topPos + 61, 9, 9)
-                .withTag("clear").withTooltip(new TranslatableComponent("gui.extendedexchange.arcane_tablet.clear")));
+                .withTag("clear").withTooltip(Component.translatable("gui.extendedexchange.arcane_tablet.clear")));
 
         addRenderableWidget(new SearchTypeButton(leftPos - 71, topPos + 36));
 
@@ -63,11 +62,16 @@ public class ArcaneTabletScreen extends AbstractTableScreen<ArcaneTabletMenu> {
     }
 
     @Override
-    protected void renderBg(PoseStack poseStack, float partialTick, int mouseX, int mouseY) {
-        super.renderBg(poseStack, partialTick, mouseX, mouseY);
-
-        blit(poseStack, leftPos - 75, topPos + 10, 180, 19, 76, 89);
+    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+        super.renderBg(guiGraphics, partialTick, mouseX, mouseY);
+        guiGraphics.blit(TEXTURE,leftPos - 75, topPos + 10, 180, 19, 76, 89);
     }
+
+//    @Override
+//    protected void renderBg(PoseStack poseStack, float partialTick, int mouseX, int mouseY) {
+//        super.renderBg(poseStack, partialTick, mouseX, mouseY);
+//        blit(poseStack, leftPos - 75, topPos + 10, 180, 19, 76, 89);
+//    }
 
     @Override
     protected ResourceLocation getGuiTexture() {

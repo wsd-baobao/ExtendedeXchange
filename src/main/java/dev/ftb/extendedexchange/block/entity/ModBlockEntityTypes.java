@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ModBlockEntityTypes {
-    public static final DeferredRegister<BlockEntityType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, ExtendedExchange.MOD_ID);
+    public static final DeferredRegister<BlockEntityType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, ExtendedExchange.MOD_ID);
 
     public static final RegistryObject<BlockEntityType<EnergyLinkBlockEntity>> ENERGY_LINK
             = register("energy_link", EnergyLinkBlockEntity::new, ModBlocks.ENERGY_LINK);

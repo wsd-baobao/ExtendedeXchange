@@ -8,6 +8,7 @@ import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage;
+import moze_intel.projecte.api.proxy.IEMCProxy;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -26,7 +27,7 @@ public class LinkOutputHandler extends BaseItemStackHandler<AbstractLinkInvBlock
         super.deserializeNBT(nbt);
 
         for (int i = 0; i < stacks.size(); i++) {
-            stacks.set(i, ProjectEAPI.getEMCProxy().getPersistentInfo(ItemInfo.fromStack(stacks.get(i))).createStack());
+            stacks.set(i, IEMCProxy.INSTANCE.getPersistentInfo(ItemInfo.fromStack(stacks.get(i))).createStack());
         }
     }
 
@@ -47,7 +48,7 @@ public class LinkOutputHandler extends BaseItemStackHandler<AbstractLinkInvBlock
         ItemStack stack = getStackInSlot(slot);
         if (stack.isEmpty()) return ItemStack.EMPTY;
 
-        long value = ProjectEAPI.getEMCProxy().getValue(stack);
+        long value = IEMCProxy.INSTANCE.getValue(stack);
         if (value == 0L) return ItemStack.EMPTY;
 
         IKnowledgeProvider knowledgeProvider = null;
@@ -94,7 +95,7 @@ public class LinkOutputHandler extends BaseItemStackHandler<AbstractLinkInvBlock
             return ItemStack.EMPTY;
         }
 
-        long value = ProjectEAPI.getEMCProxy().getValue(stacks.get(slot));
+        long value = IEMCProxy.INSTANCE.getValue(stacks.get(slot));
         if (value > 0L) {
             IKnowledgeProvider provider = KnowledgeProviderCache.getInstance().getCachedProvider(owningBlockEntity.getLevel(), owningBlockEntity.getOwnerId());
             if (provider != null) {

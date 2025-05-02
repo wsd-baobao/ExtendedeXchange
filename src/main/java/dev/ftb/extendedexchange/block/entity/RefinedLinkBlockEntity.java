@@ -3,7 +3,6 @@ package dev.ftb.extendedexchange.block.entity;
 import dev.ftb.extendedexchange.menu.RefinedLinkMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -18,7 +17,7 @@ public class RefinedLinkBlockEntity extends AbstractLinkInvBlockEntity implement
 
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent("block.extendedexchange.refined_link");
+        return Component.translatable("block.extendedexchange.refined_link");
     }
 
     @Nullable

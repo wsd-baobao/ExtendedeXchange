@@ -3,7 +3,6 @@ package dev.ftb.extendedexchange.client.gui.buttons;
 import dev.ftb.extendedexchange.config.ConfigHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.List;
 
@@ -18,7 +17,7 @@ public class SearchTypeButton extends HighlightButton {
 
     @Override
     public void addTooltip(double mouseX, double mouseY, List<Component> curTip, boolean shift) {
-        curTip.add(new TranslatableComponent("extendedexchange.general.search_type"));
-        curTip.add(new TranslatableComponent(ConfigHelper.client().general.searchType.get().translationKey).withStyle(ChatFormatting.GRAY));
+        curTip.add(Component.translatable("extendedexchange.general.search_type"));
+        curTip.add(Component.translatable(ConfigHelper.client().general.searchType.get().translationKey).withStyle(ChatFormatting.GRAY));
     }
 }
