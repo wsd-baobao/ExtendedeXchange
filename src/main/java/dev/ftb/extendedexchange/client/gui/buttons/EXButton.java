@@ -55,7 +55,8 @@ public abstract class EXButton extends Button implements ITooltipProvider {
 
     @Override
     public void addTooltip(double mouseX, double mouseY, List<Component> curTip, boolean shift) {
-        Logger.getLogger("EXButton").info("Adding tooltip to " + this);
-        curTip.addAll(tooltip);
+        if (isHovered){
+            curTip.addAll(tooltip);
+        }
     }
 }

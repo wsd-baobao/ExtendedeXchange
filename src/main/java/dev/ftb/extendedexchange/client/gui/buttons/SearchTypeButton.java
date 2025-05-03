@@ -17,7 +17,9 @@ public class SearchTypeButton extends HighlightButton {
 
     @Override
     public void addTooltip(double mouseX, double mouseY, List<Component> curTip, boolean shift) {
-        curTip.add(Component.translatable("extendedexchange.general.search_type"));
-        curTip.add(Component.translatable(ConfigHelper.client().general.searchType.get().translationKey).withStyle(ChatFormatting.GRAY));
+        if (isHovered) {
+            curTip.add(Component.translatable("extendedexchange.general.search_type"));
+            curTip.add(Component.translatable(ConfigHelper.client().general.searchType.get().translationKey).withStyle(ChatFormatting.GRAY));
+        }
     }
 }

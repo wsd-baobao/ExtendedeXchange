@@ -7,10 +7,8 @@ import com.google.common.collect.Multiset;
 import dev.ftb.extendedexchange.util.EXUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import moze_intel.projecte.api.ItemInfo;
-import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.config.ProjectEConfig;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
@@ -90,9 +88,16 @@ public class ArcaneTabletMenu extends AbstractTableMenu {
         ItemStack itemStack = ItemStack.EMPTY;
         Optional<CraftingRecipe> optional = level.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, container, level);
         if (optional.isPresent() && result.setRecipeUsed(level, serverPlayer, craftingRecipe = optional.get())) {
-            itemStack = craftingRecipe.assemble(container, RegistryAccess.EMPTY);
+            itemStack = craftingRecipe.assemble(container, level.registryAccess());
         }
+//        if (optional.isPresent()) {
+//            CraftingRecipe recipe = optional.get();
+//            itemStack = recipe.assemble(container,level.registryAccess());
+//            // 设置使用的配方
+//            result.setRecipeUsed(level, serverPlayer, recipe);
+//        }
         result.setItem(0, itemStack);
+        System.out.println("crafting result: " + itemStack);
         menu.setRemoteSlot(0, itemStack);
         serverPlayer.connection.send(new ClientboundContainerSetSlotPacket(menu.containerId, menu.incrementStateId(), 0, itemStack));
     }
@@ -386,15 +391,6 @@ public class ArcaneTabletMenu extends AbstractTableMenu {
             super(player, matrix, result, slot, x, y);
         }
 
-//        @Override
-//        protected void onCrafting(ItemStack stack) {
-//            super.onCrafting(stack);
-//
-//            if (IEMCProxy.INSTANCE.hasValue(stack) && ProjectEXUtils.addKnowledge(player, playerData, ProjectEXUtils.fixOutput(stack)) == 2 && knowledgeUpdate != null) {
-//                knowledgeUpdate.updateKnowledge();
-//            }
-//        }
-
         @Override
         protected void onQuickCraft(ItemStack stack, int amount) {
             super.onQuickCraft(stack, amount);
@@ -411,7 +407,6 @@ public class ArcaneTabletMenu extends AbstractTableMenu {
                     prevItems[i] = ItemHandlerHelper.copyStackWithSize(prevItems[i], 1);
                 }
             }
-
             super.onTake(player, stack);
 
             for (int i = 0; i < prevItems.length; i++) {
@@ -420,7 +415,6 @@ public class ArcaneTabletMenu extends AbstractTableMenu {
                 }
             }
         }
-
         public void onTakeNoRefill(Player player, ItemStack stack) {
             // see ArcaneTable#quickMoveStack()
             // called when shift-clicking out; just call the super onTake(), to avoid backfilling
@@ -430,16 +424,17 @@ public class ArcaneTabletMenu extends AbstractTableMenu {
 
     public class ArcaneTabletCraftingContainer implements CraftingContainer {
         private final IItemHandlerModifiable items;
-
+        private final  int x, y;
         public ArcaneTabletCraftingContainer(ArcaneTabletMenu tablet, int width, int height, IItemHandlerModifiable items) {
             super();
-
             this.items = items;
+            this.x = width;
+            this.y = height;
         }
 
         @Override
         public int getContainerSize() {
-            return 0;
+            return 9;
         }
 
         @Override
@@ -514,17 +509,21 @@ public class ArcaneTabletMenu extends AbstractTableMenu {
 
         @Override
         public int getWidth() {
-            return 3;
+            return x;
         }
 
         @Override
         public int getHeight() {
-            return 3;
+            return y;
         }
 
         @Override
         public List<ItemStack> getItems() {
-            return List.of();
+            List<ItemStack> list = new ArrayList<>();
+            for (int i = 0; i < getContainerSize(); i++) {
+                list.add(getItem(i));
+            }
+            return list;
         }
     }
 }

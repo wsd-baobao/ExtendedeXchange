@@ -93,6 +93,10 @@ public abstract class AbstractTableScreen<C extends AbstractTableMenu> extends A
             searchField.setValue("");
             return true;
         }
+        //  如果点击的不是搜索框就取消焦点
+        if (!searchFieldPos().contains((int) mouseX, (int) mouseY) && searchField.isFocused()) {
+            searchField.setFocused(false);
+        }
         System.out.println(button);
         return super.mouseClicked(mouseX, mouseY, button);
     }

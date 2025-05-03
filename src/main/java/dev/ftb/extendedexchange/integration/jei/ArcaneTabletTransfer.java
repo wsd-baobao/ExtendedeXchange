@@ -1,6 +1,7 @@
 package dev.ftb.extendedexchange.integration.jei;
 
 import dev.ftb.extendedexchange.menu.ArcaneTabletMenu;
+import dev.ftb.extendedexchange.menu.ModMenuTypes;
 import dev.ftb.extendedexchange.network.NetworkHandler;
 import dev.ftb.extendedexchange.network.PacketArcaneTabletRecipeTransfer;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -40,7 +41,7 @@ public class ArcaneTabletTransfer implements IRecipeTransferHandler<ArcaneTablet
 
     @Override
     public Optional<MenuType<ArcaneTabletMenu>> getMenuType() {
-        return Optional.empty();
+        return Optional.of(ModMenuTypes.ARCANE_TABLET.get());
     }
 
     @Override

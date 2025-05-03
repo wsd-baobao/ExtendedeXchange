@@ -86,7 +86,7 @@ public class EXClientEventHandler {
 
                 // 计算文本位置（根据oPos决定）
                 int x, y;
-                int padding = 5; // 文本与边缘的间距
+                int padding = 2; // 文本与边缘的间距
 
                 if (oPos == EMCOverlayPosition.TOP_LEFT) {
                     x = padding;
@@ -98,7 +98,7 @@ public class EXClientEventHandler {
                 // 绘制文本背景（可选，提高可读性）
                 int backgroundWidth = textWidth + padding * 2;
                 int backgroundHeight = textHeight + padding * 2;
-                guiGraphics.fill(x - padding, y - padding, x + backgroundWidth - padding, y + backgroundHeight - padding, 0x80000000);
+                guiGraphics.fill(x - padding, y - padding, x + backgroundWidth - padding, y + backgroundHeight - padding, 0x40000000);
                 // 绘制文本
                 guiGraphics.drawString(font, text, x, y, 0xFFFFFF, false);
             }

@@ -25,17 +25,12 @@ public abstract class AbstractLinkScreen<C extends AbstractLinkMenu<T>, T extend
 
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-//        super.renderLabels(guiGraphics, mouseX, mouseY);
         guiGraphics.drawString(font, menu.getBlockEntity().getOwnerName(), 8f, 6f, 0x404040, false);
         guiGraphics.drawString(font,EXClientEventHandler.getEMCRateString(), 8, getEMCLabelYPos(), 0x404040, false);
-//        font.draw(poseStack, menu.getBlockEntity().getOwnerName(), 8f, 6f, 0x404040);
-//        font.draw(poseStack, EXClientEventHandler.getEMCRateString(), 8, getEMCLabelYPos(), 0x404040);
+
     }
 
-//    protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
-//        font.draw(poseStack, menu.getBlockEntity().getOwnerName(), 8f, 6f, 0x404040);
-//        font.draw(poseStack, EXClientEventHandler.getEMCRateString(), 8, getEMCLabelYPos(), 0x404040);
-//    }
+
 
     protected int getEMCLabelYPos() {
         return 73;

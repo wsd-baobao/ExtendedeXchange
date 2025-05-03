@@ -54,7 +54,6 @@ public class ExtractItemButton extends EXButton {
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (!visible) return;
-
         if (!item.isEmpty()) {
             // draw number of items which could be extracted
             Font font = Minecraft.getInstance().font;
@@ -67,7 +66,10 @@ public class ExtractItemButton extends EXButton {
             guiGraphics.drawString(font,label, -font.width(label), 0, 0xFFFFFFFF,true);
             poseStack.popPose();
         }
-        if (isHoveredOrFocused()) {
+
+        //todo 啥也不敢都会持续的调用
+        //下边是绘制高亮的
+        if (isHovered) {
             RenderSystem.setShader(GameRenderer::getPositionColorShader);
 //            RenderSystem.setShaderTexture(0, BLANK_TEXTURE); // 禁用纹理
             RenderSystem.enableBlend();
@@ -77,29 +79,6 @@ public class ExtractItemButton extends EXButton {
         }
     }
 
-//    @Override
-//    public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
-//        if (!visible) return;
-//
-//        if (!item.isEmpty()) {
-//            // draw number of items which could be extracted
-//            Font font = Minecraft.getInstance().font;
-//            Minecraft.getInstance().getItemRenderer().renderGuiItem(item, x, y);
-//            String label = getExtractionCountStr();
-//            poseStack.pushPose();
-//            poseStack.translate(x + 17, y + 12, 200d);
-//            poseStack.scale(0.5F, 0.5F, 0.5F);
-//            font.drawShadow(poseStack, label, -font.width(label), 0, 0xFFFFFFFF);
-//            poseStack.popPose();
-//        }
-//        if (isHoveredOrFocused()) {
-//            RenderSystem.disableTexture();
-//            RenderSystem.enableBlend();
-//            RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-//            fill(poseStack, x, y, x + width, y + height, 0x80FFFFFF);
-//            RenderSystem.disableBlend();
-//        }
-//    }
 
     private static final BigDecimal ONE_TENTH = BigDecimal.valueOf(1L, 1);
     private String getExtractionCountStr() {
@@ -119,8 +98,8 @@ public class ExtractItemButton extends EXButton {
 
     @Override
     public void addTooltip(double mouseX, double mouseY, List<Component> curTip, boolean shift) {
-        Logger.getLogger("ExtractItemButton").info("addTooltip");
-        isHoveredOrFocused();
-        curTip.addAll(item.getTooltipLines(Minecraft.getInstance().player, Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL));
-    }
+        if (isHovered) {
+            curTip.addAll(item.getTooltipLines(Minecraft.getInstance().player, Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL));
+        }
+        }
 }

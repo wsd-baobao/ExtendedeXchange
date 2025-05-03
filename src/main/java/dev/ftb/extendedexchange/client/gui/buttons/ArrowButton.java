@@ -19,7 +19,7 @@ public class ArrowButton extends EXButton {
 
     @Override
     protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        if (isHoveredOrFocused()) {
+        if (isHovered) {
             AbstractEXScreen.bindTexture(texture);
             RenderSystem.enableBlend();
             RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -29,14 +29,4 @@ public class ArrowButton extends EXButton {
         }
     }
 
-//    @Override
-//    public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
-//        if (isHoveredOrFocused()) {
-//            AbstractEXScreen.bindTexture(texture);
-//            RenderSystem.enableBlend();
-//            RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-//            blit(poseStack, x, y, textureX, textureY, width, height);
-//            RenderSystem.disableBlend();
-//        }
-//    }
 }

@@ -42,6 +42,7 @@ public abstract class AbstractEXScreen<C extends AbstractEXMenu<T>, T extends Ab
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
 
+
         List<Component> tooltip = new ArrayList<>();
         renderables.stream()
                 .filter(w -> w instanceof ITooltipProvider p && p.shouldProvide())

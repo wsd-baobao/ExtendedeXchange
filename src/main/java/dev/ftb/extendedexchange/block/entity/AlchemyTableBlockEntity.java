@@ -85,7 +85,10 @@ public class AlchemyTableBlockEntity extends AbstractEMCBlockEntity implements M
 
         ItemStack input = inventory.getStackInSlot(0);
         findRecipeFor(input).ifPresent(recipe -> {
-            ItemStack result = recipe.assemble(new SimpleContainer(input), RegistryAccess.EMPTY);
+            ItemStack result = null;
+            if (level != null) {
+                result = recipe.assemble(new SimpleContainer(input), level.registryAccess());
+            }
             if (!hasOutput || ItemHandlerHelper.canItemStacksStack(output, result)) {
                 totalCost = recipe.getTotalCost(input);
                 craftingTime = recipe.getCraftingTime();
