@@ -28,8 +28,6 @@ public class ModCreativeModeTab {
                     })
 
                     .build());
-
-
     public static void register(IEventBus bus){
         REGISTRY.register(bus);
     }

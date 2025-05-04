@@ -5,6 +5,7 @@ import dev.ftb.extendedexchange.client.gui.buttons.ExtractItemButton;
 import dev.ftb.extendedexchange.config.ConfigHelper;
 import dev.ftb.extendedexchange.integration.jei.JEIHooks;
 import dev.ftb.extendedexchange.menu.AbstractTableMenu;
+import dev.ftb.extendedexchange.util.PinYinUtils;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.capabilities.PECapabilities;
@@ -16,7 +17,9 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.StringUtils;
@@ -26,14 +29,15 @@ import java.util.*;
 
 /**
  * Base functionality for the Stone Tablet and Arcane Transmutation Tablet GUIs
+ *
  * @param <C>
  */
-public abstract class AbstractTableScreen<C extends AbstractTableMenu> extends AbstractEXScreen<C,AbstractEMCBlockEntity> implements KnowledgeUpdateListener {
+public abstract class AbstractTableScreen<C extends AbstractTableMenu> extends AbstractEXScreen<C, AbstractEMCBlockEntity> implements KnowledgeUpdateListener {
 
     // static so they persist across GUI invocations
     private static int staticPage = 0;
     private static String staticSearch = "";
-    
+
     private final List<ItemStack> validItems = new ArrayList<>();
     protected final List<ExtractItemButton> extractButtons = new ArrayList<>();
     private EditBox searchField;
@@ -49,7 +53,7 @@ public abstract class AbstractTableScreen<C extends AbstractTableMenu> extends A
         super.init();
 
         Rect2i tb = searchFieldPos();
-        searchField = new EditBox(font, tb.getX(), tb.getY(), tb.getWidth(), tb.getHeight(),Component.empty());
+        searchField = new EditBox(font, tb.getX(), tb.getY(), tb.getWidth(), tb.getHeight(), Component.empty());
         searchField.setTextColor(0xFFFFFFFF);
         searchField.setTextColorUneditable(0xFF808080);
         searchField.setBordered(false);
@@ -80,7 +84,6 @@ public abstract class AbstractTableScreen<C extends AbstractTableMenu> extends A
     }
 
 
-
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         changePage(delta < 0);  // scroll down = forward a page
@@ -106,7 +109,7 @@ public abstract class AbstractTableScreen<C extends AbstractTableMenu> extends A
         Minecraft.getInstance().player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY).ifPresent(p -> {
             String s = EMCFormat.INSTANCE.format(p.getEmc());
 //            font.draw(poseStack, s, ((imageWidth - font.width(s)) / 2f),  -9f, 0xFFB5B5B5);
-            guiGraphics.drawString(font, s, ((imageWidth - font.width(s)) / 2f),  -9f, 0xFFB5B5B5,  false);
+            guiGraphics.drawString(font, s, ((imageWidth - font.width(s)) / 2f), -9f, 0xFFB5B5B5, false);
         });
     }
 
@@ -157,12 +160,37 @@ public abstract class AbstractTableScreen<C extends AbstractTableMenu> extends A
         if (mod) {
             srchStr = srchStr.substring(1);
         }
-
+        String lowerSrchStr = srchStr.toLowerCase();
         for (ItemInfo itemInfo : menu.getProvider().getKnowledge()) {
             ItemStack stack = itemInfo.createStack();
-            if (!stack.isEmpty() && menu.isItemValid(stack) && (srchStr.isEmpty() || mod ?
-                    ForgeRegistries.ITEMS.getKey(itemInfo.getItem()).getNamespace().startsWith(srchStr) :
-                    StringUtils.contains(trim(stack.getDisplayName().getString()), srchStr)))
+            if (stack.isEmpty()) continue;
+            if (!menu.isItemValid(stack)) continue;
+
+            Item item = itemInfo.getItem();
+            ResourceLocation registryName = ForgeRegistries.ITEMS.getKey(item);
+            if (registryName == null) continue;
+
+            String itemName = stack.getDisplayName().getString();
+            boolean namespaceMatch = mod && registryName.getNamespace().toLowerCase().startsWith(lowerSrchStr);
+            // 名称匹配（不区分大小写）
+            String lowerItemName = itemName.trim().toLowerCase();
+            boolean nameMatch = lowerItemName.contains(lowerSrchStr);
+            // 拼音匹配
+            boolean pinyinMatch = false;
+            if (!mod && !lowerSrchStr.isEmpty()) {
+                String pinyin = PinYinUtils.toPinyin(itemName);
+                String[] parts = pinyin.split("\\|");
+                if (parts.length >= 2) {
+                    String fullPinyin = parts[0];      // 全拼
+                    String firstLetters = parts[1];    // 首字母
+                    pinyinMatch = fullPinyin.contains(lowerSrchStr) ||
+                            firstLetters.contains(lowerSrchStr);
+                }
+            }
+            // 最终匹配条件
+            if (lowerSrchStr.isEmpty() ||
+                    (mod && namespaceMatch) ||
+                    (!mod && (nameMatch || pinyinMatch)))
             {
                 validItems.add(IEMCProxy.INSTANCE.getPersistentInfo(itemInfo).createStack());
             }

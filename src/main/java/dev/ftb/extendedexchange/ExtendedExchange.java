@@ -33,7 +33,8 @@ public class ExtendedExchange {
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         forgeBus.register(Remapper.class);
-        ModCreativeModeTab.REGISTRY.register(modBus);
+//        ModCreativeModeTab.REGISTRY.register(modBus);
+        ModCreativeModeTab.register(modBus);
         ModBlocks.REGISTRY.register(modBus);
         ModItems.REGISTRY.register(modBus);
         ModBlockEntityTypes.REGISTRY.register(modBus);

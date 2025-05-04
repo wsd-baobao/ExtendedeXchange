@@ -1,7 +1,8 @@
 plugins {
-	id "dev.architectury.loom" version "0.12.0-SNAPSHOT"
+	id "dev.architectury.loom" version "1.4-SNAPSHOT"
 	id "maven-publish"
 	id "com.matthewprenger.cursegradle" version "1.4.0"
+	id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
@@ -23,19 +24,24 @@ loom {
 //				"examplemod.mixins.json"
 		]
 
+
+
 		dataGen {
 			mod project.mod_id
 		}
 	}
 
-	launches {
-		data {
-			arg "--existing", file("src/main/resources").absolutePath
-		}
-	}
+//	launches {
+//		data {
+//			arg "--existing", file("src/main/resources").absolutePath
+//		}
+//	}
 }
 
+
+
 repositories {
+	mavenCentral()
 	flatDir {
 		name "extra-mods"
 		dir file(extraModsDir)
@@ -66,6 +72,10 @@ dependencies {
 
 //	modCompileOnly "mezz.jei:jei-${minecraft_version}:${jei_version}:api"
 //	modRuntimeOnly "mezz.jei:jei-${minecraft_version}:${jei_version}"
+//	modCompileOnly 'com.belerweb:pinyin4j:2.5.1'
+    shadow("com.belerweb:pinyin4j:2.5.1")
+	implementation "com.belerweb:pinyin4j:2.5.1"  //拼音搜索使用的库
+	forgeRuntimeLibrary("com.belerweb:pinyin4j:2.5.1")
 
 	// Locally sourced extra mods for runtime (i.e. testing) - thanks AE2 for this idea
 	for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {
@@ -93,12 +103,40 @@ tasks.withType(JavaCompile).configureEach {
 	options.compilerArgs << "-Xlint:-removal" //
 }
 
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+}
+
+
 java {
 	withSourcesJar()
 }
 
 
 jar {
+	enabled = false
+//	manifest {
+//		attributes([
+//				"Specification-Title"     : project.mod_id,
+//				"Specification-Vendor"    : project.mod_author,
+//				"Specification-Version"   : "1",
+//				"Implementation-Title"    : project.name,
+//				"Implementation-Version"  : version,
+//				"Implementation-Vendor"   : project.mod_author,
+//				"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+//		])
+//	}
+////	from(shadowJar.archiveFile)
+//	from sourceSets.main.output
+}
+shadowJar{
 	manifest {
 		attributes([
 				"Specification-Title"     : project.mod_id,
@@ -110,7 +148,28 @@ jar {
 				"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
 		])
 	}
+	archiveClassifier.set('shadow')
+    configurations = [project.configurations.shadow]
+	dependencies {
+		include(dependency("com.belerweb:pinyin4j:2.5.1"))
+	}
+	exclude('META-INF/maven/**')
+	exclude('META-INF/*.txt')
+	from sourceSets.main.output.classesDirs
+	from sourceSets.main.output.resourcesDir
+	relocate("net.sourceforge.pinyin4j","extendedexchange.lib.pinyin4j")
+	relocate 'com.hp.hpl.sparta', 'extendedexchange.lib.sparta'
+	dependsOn(processResources)
+	dependsOn(classes)
 }
+//混淆必须使用不同的文件位置，不可以使用同一个文件进行多次操作
+remapJar{
+    input.set(shadowJar.archiveFile)
+	dependsOn shadowJar
+	archiveClassifier.set('')
+}
+
+tasks.build.dependsOn(remapJar)
 
 def relType = "release"
 if (ENV.TAG != null) {
