@@ -63,7 +63,7 @@ public class EXClientEventHandler {
         emcRate = BigInteger.ZERO;
         emcRingBuffer.clear();
     }
-
+//todo 黑色纯色背景，不好看，应该是半透明的黑丝
     @SubscribeEvent
     public static void addInfoText(RenderGuiOverlayEvent.Post event) {
         if (Minecraft.getInstance().player != null &&
@@ -107,7 +107,7 @@ public class EXClientEventHandler {
 
     @NotNull
     public static String getEMCRateString() {
-        String s = EMCFormat.INSTANCE.format(emcAmount);
+        String s = EMCFormat.INSTANCE.formatSelect(emcAmount);
         if (emcRate.signum() != 0) {
             s += (emcRate.signum() > 0 ? (ChatFormatting.GREEN + "+") : (ChatFormatting.RED + "-")) + EMCFormat.INSTANCE.format(emcRate.abs()) + "/s";
         }

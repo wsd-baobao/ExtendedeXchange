@@ -107,7 +107,7 @@ public abstract class AbstractTableScreen<C extends AbstractTableMenu> extends A
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         Minecraft.getInstance().player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY).ifPresent(p -> {
-            String s = EMCFormat.INSTANCE.format(p.getEmc());
+            String s = EMCFormat.INSTANCE.formatSelect(p.getEmc());
 //            font.draw(poseStack, s, ((imageWidth - font.width(s)) / 2f),  -9f, 0xFFB5B5B5);
             guiGraphics.drawString(font, s, ((imageWidth - font.width(s)) / 2f), -9f, 0xFFB5B5B5, false);
         });

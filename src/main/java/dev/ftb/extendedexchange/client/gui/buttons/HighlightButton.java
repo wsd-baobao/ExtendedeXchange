@@ -37,7 +37,7 @@ public class HighlightButton extends EXButton {
     protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (isHovered) {
             RenderSystem.setShader(GameRenderer::getPositionColorShader);
-            RenderSystem.setShaderTexture(0, BLANK_TEXTURE); // 禁用纹理
+//            RenderSystem.setShaderTexture(0, BLANK_TEXTURE); // 禁用纹理
             RenderSystem.enableBlend();
             RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             guiGraphics.fill(x, y, x + width, y + height, 0x80FFFFFF);

@@ -4,6 +4,7 @@ import dev.ftb.extendedexchange.config.ConfigHelper;
 import net.minecraft.client.gui.screens.Screen;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.FieldPosition;
@@ -14,7 +15,7 @@ import java.text.FieldPosition;
 public class EMCFormat extends DecimalFormat {
     public static final EMCFormat INSTANCE = new EMCFormat(false);
     public static final EMCFormat INSTANCE_IGNORE_SHIFT = new EMCFormat(true);
-
+    private final DecimalFormat valueformat = new DecimalFormat("0.###E0");
     private final boolean ignoreShift;
 
     private EMCFormat(boolean is) {
@@ -24,6 +25,10 @@ public class EMCFormat extends DecimalFormat {
     }
 
     public static String formatBigDecimal(BigDecimal d) {
+        // 未实验功能
+        if (d.precision() - d.scale() >= 25) { // 10^24 以上（如 1e25）
+            return String.format("%.2e", d); // 使用科学计数法输出
+        }
         String s = d.toString();
         if (s.length() >= 25) {
             s = s.substring(0, s.length() - 24) + "Y";
@@ -42,13 +47,27 @@ public class EMCFormat extends DecimalFormat {
         }
         return s;
     }
+    public String formatSelect(Object ojb) {
+        if (ignoreShift || !Screen.hasShiftDown()) {
+
+            if (ojb instanceof BigInteger bd) {
+                try {
+                    long l = bd.longValueExact();
+                    INSTANCE.format(l);
+                }catch (ArithmeticException e){
+                    return valueformat.format(new BigDecimal(bd));
+                }
+            }
+        }
+        return super.format(ojb);
+    }
 
     @Override
     public StringBuffer format(double number, StringBuffer result, FieldPosition fieldPosition) {
         if (ConfigHelper.client().general.overrideEMCFormatter.get() && number >= 1_000_000D && (ignoreShift || !Screen.hasShiftDown())) {
             double num;
             char c;
-
+            //这个方法貌似没用
             if (number >= 1_000_000_000_000_000_000_000_000D) {
                 num = number / 1_000_000_000_000_000_000_000_000D;
                 c = 'Y';
@@ -71,7 +90,6 @@ public class EMCFormat extends DecimalFormat {
                 num = number / 1_000_000D;
                 c = 'M';
             }
-
             StringBuffer buffer = new StringBuffer();
             buffer.append(String.format("%.02f", num));
             buffer.append(c);
@@ -103,7 +121,6 @@ public class EMCFormat extends DecimalFormat {
                 num = number / 1_000_000D;
                 c = 'M';
             }
-
             StringBuffer buffer = new StringBuffer();
             buffer.append(String.format("%.02f", num));
             buffer.append(c);
