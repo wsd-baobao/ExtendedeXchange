@@ -63,14 +63,14 @@ public abstract class AbstractLinkInvBlockEntity extends AbstractLinkBlockEntity
         // scan items in the input inv and convert to EMC, adding to the block's EMC store
 
         ServerPlayer player = nonNullLevel().getServer().getPlayerList().getPlayer(getOwnerId());
-        log.info("Player " + player);
+//        log.info("Player " + player);
         LazyOptional<IKnowledgeProvider> knowledgeProvider = player == null ? LazyOptional.empty() : player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
         boolean syncKnowledge = false;
         boolean changeDone = false;
 
         for (int i = 0; i < inputHandler.getSlots(); i++) {
             ItemStack stack = inputHandler.getStackInSlot(i);
-            log.info("Item in slot " + i + ": " + stack);
+//            log.info("Item in slot " + i + ": " + stack);
             if (!stack.isEmpty()) {
                 long value = IEMCProxy.INSTANCE.getValue(stack);
 
